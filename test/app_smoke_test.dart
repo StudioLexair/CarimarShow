@@ -117,7 +117,7 @@ void main() {
     await tester.tap(
       find.descendant(
         of: find.byType(AlertDialog),
-        matching: find.text('Entrar como invitado'),
+        matching: find.widgetWithText(FilledButton, 'Entrar como invitado'),
       ),
     );
     await settleUntil(tester, find.text('Mi lista'));

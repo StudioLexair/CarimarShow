@@ -64,7 +64,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final bool? go = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Entrar como invitado'),
+        title: const Text('Modo invitado'),
         content: const Text(
           'Puedes usar la aplicación sin crear una cuenta, pero tu lista, '
           'tu progreso y tus preferencias se guardarán SOLO en este '
