@@ -31,7 +31,7 @@ class RatingBadge extends StatelessWidget {
 
   /// Color semáforo según la puntuación.
   Color get color {
-    if (!hasValue) return context.pal.textDisabled;
+    if (!hasValue) return AppColors.textDisabled;
     if (voteAverage >= 7.5) return AppColors.success;
     if (voteAverage >= 6) return const Color(0xFF9BE15D);
     if (voteAverage >= 4.5) return AppColors.warning;
