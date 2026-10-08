@@ -22,10 +22,10 @@ class BusinessInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.pal.background,
       appBar: AppBar(
         title: const Text(BusinessInfo.name),
-        backgroundColor: AppColors.background,
+        backgroundColor: context.pal.background,
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
@@ -67,7 +67,7 @@ class BusinessInfoScreen extends StatelessWidget {
             'Catálogo informativo: la app muestra información pública de '
             'películas y series y no aloja ni reproduce contenido.',
             style: TextStyle(
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
               fontSize: 12.5,
               height: 1.5,
             ),
@@ -97,16 +97,16 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      color: AppColors.surface,
+      color: context.pal.surface,
       child: ListTile(
         leading: Icon(icon, color: AppColors.accent),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 13, color: AppColors.textDisabled),
+          style: TextStyle(fontSize: 13, color: context.pal.textDisabled),
         ),
         subtitle: Text(
           body,
-          style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+          style: TextStyle(fontSize: 15, color: context.pal.textPrimary),
         ),
         trailing: onTap == null
             ? null

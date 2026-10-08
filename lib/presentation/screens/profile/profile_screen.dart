@@ -99,7 +99,7 @@ class ProfileScreen extends ConsumerWidget {
 
           const _SectionLabel('Negocio'),
           Card(
-            color: AppColors.surface,
+            color: context.pal.surface,
             child: ListTile(
               leading: const Icon(
                 Icons.storefront_outlined,
@@ -265,9 +265,9 @@ class _ProfileHeader extends StatelessWidget {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceHighest,
+                    color: context.pal.surfaceHighest,
                     borderRadius: BorderRadius.circular(999),
-                    border: Border.all(color: AppColors.outline),
+                    border: Border.all(color: context.pal.outline),
                   ),
                   child: const Text(
                     'INVITADO',
@@ -309,7 +309,7 @@ class _ProfileHeader extends StatelessWidget {
                   'Miembro desde ${Formatters.shortDate(user!.createdAt)}',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppColors.textDisabled,
+                    color: context.pal.textDisabled,
                   ),
                 ),
               ],
@@ -344,10 +344,10 @@ class _StatsRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: AppColors.surfaceHigh,
+                color: context.pal.surfaceHigh,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: AppColors.outline.withValues(alpha: 0.6),
+                  color: context.pal.outline.withValues(alpha: 0.6),
                 ),
               ),
               child: Column(
@@ -358,7 +358,7 @@ class _StatsRow extends StatelessWidget {
                       fontSize: 21,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.6,
-                      color: AppColors.textPrimary,
+                      color: context.pal.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -369,7 +369,7 @@ class _StatsRow extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textDisabled,
+                      color: context.pal.textDisabled,
                     ),
                   ),
                 ],
@@ -397,7 +397,7 @@ class _SectionLabel extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.0,
-          color: AppColors.textDisabled,
+          color: context.pal.textDisabled,
         ),
       ),
     );
@@ -455,7 +455,7 @@ class _SelectableCard extends StatelessWidget {
     return Material(
       color: selected
           ? AppColors.crimson.withValues(alpha: 0.14)
-          : AppColors.surfaceHigh,
+          : context.pal.surfaceHigh,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -467,7 +467,7 @@ class _SelectableCard extends StatelessWidget {
             border: Border.all(
               color: selected
                   ? AppColors.crimson
-                  : AppColors.outline.withValues(alpha: 0.6),
+                  : context.pal.outline.withValues(alpha: 0.6),
               width: selected ? 1.4 : 1,
             ),
           ),
@@ -476,7 +476,7 @@ class _SelectableCard extends StatelessWidget {
               Icon(
                 icon,
                 size: 20,
-                color: selected ? AppColors.crimson : AppColors.textSecondary,
+                color: selected ? AppColors.crimson : context.pal.textSecondary,
               ),
               const SizedBox(height: 6),
               Text(
@@ -484,7 +484,9 @@ class _SelectableCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: selected ? AppColors.crimson : AppColors.textSecondary,
+                  color: selected
+                      ? AppColors.crimson
+                      : context.pal.textSecondary,
                 ),
               ),
             ],
@@ -514,15 +516,15 @@ class _SwitchTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: context.pal.surfaceHigh,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
+        border: Border.all(color: context.pal.outline.withValues(alpha: 0.6)),
       ),
       child: SwitchListTile(
         value: value,
         onChanged: onChanged,
         activeThumbColor: AppColors.crimson,
-        secondary: Icon(icon, size: 22, color: AppColors.textSecondary),
+        secondary: Icon(icon, size: 22, color: context.pal.textSecondary),
         title: Text(
           title,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
@@ -558,13 +560,13 @@ class _InfoTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: context.pal.surfaceHigh,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
+        border: Border.all(color: context.pal.outline.withValues(alpha: 0.6)),
       ),
       child: Row(
         children: <Widget>[
-          Icon(icon, size: 21, color: AppColors.textSecondary),
+          Icon(icon, size: 21, color: context.pal.textSecondary),
           const SizedBox(width: 13),
           Expanded(
             child: Column(
@@ -585,7 +587,7 @@ class _InfoTile extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 11,
                         height: 1.4,
-                        color: AppColors.textDisabled,
+                        color: context.pal.textDisabled,
                       ),
                     ),
                   ),
@@ -629,13 +631,15 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color color = destructive ? AppColors.danger : AppColors.textPrimary;
+    final Color color = destructive
+        ? AppColors.danger
+        : context.pal.textPrimary;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: context.pal.surfaceHigh,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
+        border: Border.all(color: context.pal.outline.withValues(alpha: 0.6)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Material(
@@ -645,7 +649,7 @@ class _ActionTile extends StatelessWidget {
           leading: Icon(
             icon,
             size: 21,
-            color: destructive ? color : AppColors.textSecondary,
+            color: destructive ? color : context.pal.textSecondary,
           ),
           title: Text(
             title,
@@ -676,9 +680,9 @@ class _AboutBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: context.pal.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.6)),
+        border: Border.all(color: context.pal.outline.withValues(alpha: 0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -713,7 +717,7 @@ class _AboutBox extends StatelessWidget {
                 'v0.1.0',
                 style: TextStyle(
                   fontSize: 11.5,
-                  color: AppColors.textDisabled,
+                  color: context.pal.textDisabled,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -725,7 +729,7 @@ class _AboutBox extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.5,
               height: 1.5,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ),
           const SizedBox(height: 10),
@@ -735,7 +739,7 @@ class _AboutBox extends StatelessWidget {
             style: TextStyle(
               fontSize: 11.5,
               height: 1.5,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ),
         ],

@@ -142,12 +142,15 @@ class ProfileImage extends StatelessWidget {
         width: size,
         height: size,
         fit: BoxFit.cover,
-        placeholder: (BuildContext context, String url) =>
-            Container(width: size, height: size, color: AppColors.surfaceHigh),
+        placeholder: (BuildContext context, String url) => Container(
+          width: size,
+          height: size,
+          color: context.pal.surfaceHigh,
+        ),
         errorWidget: (BuildContext context, String url, Object error) =>
             CircleAvatar(
               radius: size / 2,
-              backgroundColor: AppColors.surfaceHigh,
+              backgroundColor: context.pal.surfaceHigh,
             ),
       ),
     );
@@ -221,10 +224,10 @@ class _ShimmerPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget box = ColoredBox(color: AppColors.surfaceHigh);
+    final Widget box = ColoredBox(color: context.pal.surfaceHigh);
     return Shimmer.fromColors(
-      baseColor: AppColors.surfaceHigh,
-      highlightColor: AppColors.surfaceHighest,
+      baseColor: context.pal.surfaceHigh,
+      highlightColor: context.pal.surfaceHighest,
       child: borderRadius == null
           ? box
           : ClipRRect(borderRadius: borderRadius!, child: box),
@@ -248,13 +251,13 @@ class ShimmerBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: AppColors.surfaceHigh,
-      highlightColor: AppColors.surfaceHighest,
+      baseColor: context.pal.surfaceHigh,
+      highlightColor: context.pal.surfaceHighest,
       child: Container(
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: AppColors.surfaceHigh,
+          color: context.pal.surfaceHigh,
           borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),

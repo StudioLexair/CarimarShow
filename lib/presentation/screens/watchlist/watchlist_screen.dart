@@ -40,7 +40,7 @@ class WatchlistScreen extends ConsumerWidget {
             content: Text(message),
             backgroundColor: next.lastError != null
                 ? AppColors.danger
-                : AppColors.surfaceHighest,
+                : context.pal.surfaceHighest,
             duration: const Duration(seconds: 2),
           ),
         );
@@ -117,7 +117,7 @@ class WatchlistScreen extends ConsumerWidget {
                 return RefreshIndicator(
                   onRefresh: () async => ref.invalidate(watchlistProvider),
                   color: AppColors.crimson,
-                  backgroundColor: AppColors.surfaceHigh,
+                  backgroundColor: context.pal.surfaceHigh,
                   child: ListView.separated(
                     padding: EdgeInsets.fromLTRB(
                       context.gutter,
@@ -273,7 +273,7 @@ class _TypeFilters extends ConsumerWidget {
             icon: const Icon(
               Icons.delete_sweep_outlined,
               size: 20,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
             onPressed: () => _confirmClear(context, ref),
           ),
@@ -324,7 +324,7 @@ class _WatchlistTile extends ConsumerWidget {
         .isPending(item.key);
 
     return Material(
-      color: AppColors.surfaceHigh,
+      color: context.pal.surfaceHigh,
       borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -377,7 +377,7 @@ class _WatchlistTile extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 11.5,
-                        color: AppColors.textDisabled,
+                        color: context.pal.textDisabled,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -389,7 +389,7 @@ class _WatchlistTile extends ConsumerWidget {
                         child: LinearProgressIndicator(
                           value: (item.progressPercent! / 100).clamp(0, 1),
                           minHeight: 3.5,
-                          backgroundColor: AppColors.surfaceHighest,
+                          backgroundColor: context.pal.surfaceHighest,
                           valueColor: const AlwaysStoppedAnimation<Color>(
                             AppColors.crimson,
                           ),
@@ -400,7 +400,7 @@ class _WatchlistTile extends ConsumerWidget {
                         '${item.progressPercent}% visto',
                         style: const TextStyle(
                           fontSize: 10.5,
-                          color: AppColors.textDisabled,
+                          color: context.pal.textDisabled,
                         ),
                       ),
                     ],
@@ -415,7 +415,7 @@ class _WatchlistTile extends ConsumerWidget {
                 icon: const Icon(
                   Icons.close_rounded,
                   size: 18,
-                  color: AppColors.textDisabled,
+                  color: context.pal.textDisabled,
                 ),
                 onPressed: pending
                     ? null
@@ -444,7 +444,7 @@ class _StatusSelector extends ConsumerWidget {
       enabled: !pending,
       tooltip: 'Cambiar estado',
       position: PopupMenuPosition.under,
-      color: AppColors.surfaceHighest,
+      color: context.pal.surfaceHighest,
       onSelected: (WatchlistStatus status) => ref
           .read(watchlistControllerProvider.notifier)
           .setStatus(item.key, status),
@@ -460,7 +460,7 @@ class _StatusSelector extends ConsumerWidget {
                     size: 17,
                     color: status == item.status
                         ? AppColors.crimson
-                        : AppColors.textSecondary,
+                        : context.pal.textSecondary,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -470,7 +470,7 @@ class _StatusSelector extends ConsumerWidget {
                       fontWeight: FontWeight.w600,
                       color: status == item.status
                           ? AppColors.crimson
-                          : AppColors.textPrimary,
+                          : context.pal.textPrimary,
                     ),
                   ),
                   if (status == item.status) ...<Widget>[
@@ -489,9 +489,9 @@ class _StatusSelector extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: context.pal.surface,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(color: context.pal.outline),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -514,7 +514,7 @@ class _StatusSelector extends ConsumerWidget {
             const Icon(
               Icons.expand_more_rounded,
               size: 15,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ],
         ),
@@ -529,7 +529,7 @@ class _StatusSelector extends ConsumerWidget {
   };
 
   static Color _colorFor(WatchlistStatus status) => switch (status) {
-    WatchlistStatus.planned => AppColors.textSecondary,
+    WatchlistStatus.planned => context.pal.textSecondary,
     WatchlistStatus.watching => AppColors.gold,
     WatchlistStatus.completed => AppColors.success,
   };

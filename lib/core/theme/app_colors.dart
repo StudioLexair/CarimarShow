@@ -26,7 +26,7 @@ abstract final class AppColors {
   static const Color gold = Color(0xFFFFC53D);
 
   // ── Superficies (azul noche con tinte turquesa) ───────────────────────
-  static const Color background = Color(0xFF071A20);
+  static const Color background = Color(0xFF06161C);
   static const Color surface = Color(0xFF0C222B);
   static const Color surfaceHigh = Color(0xFF123039);
   static const Color surfaceHighest = Color(0xFF1A3D48);
@@ -48,10 +48,10 @@ abstract final class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: <Color>[
-      Color(0x00071A20),
-      Color(0x66071A20),
-      Color(0xCC071A20),
-      Color(0xFF071A20),
+      Color(0x0006161C),
+      Color(0x6606161C),
+      Color(0xCC06161C),
+      Color(0xFF06161C),
     ],
     stops: <double>[0.0, 0.45, 0.78, 1.0],
   );

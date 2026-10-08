@@ -75,7 +75,7 @@ class _DetailContent extends ConsumerWidget {
           expandedHeight: expandedHeight,
           pinned: true,
           stretch: true,
-          backgroundColor: AppColors.background,
+          backgroundColor: context.pal.background,
           surfaceTintColor: Colors.transparent,
           flexibleSpace: FlexibleSpaceBar(
             background: _HeroHeader(details: details),
@@ -159,16 +159,16 @@ class _DetailContent extends ConsumerWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceHigh,
+                          color: context.pal.surfaceHigh,
                           borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: AppColors.outline),
+                          border: Border.all(color: context.pal.outline),
                         ),
                         child: Text(
                           keyword,
                           style: const TextStyle(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textSecondary,
+                            color: context.pal.textSecondary,
                           ),
                         ),
                       ),
@@ -300,7 +300,7 @@ class _HeroHeader extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: AppColors.textSecondary,
+                          color: context.pal.textSecondary,
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
                           height: 1.35,
@@ -373,7 +373,7 @@ class _TitleBlock extends StatelessWidget {
             Formatters.join(meta),
             style: context.text.bodySmall?.copyWith(
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: context.pal.textSecondary,
             ),
           ),
         ],
@@ -390,16 +390,16 @@ class _TitleBlock extends StatelessWidget {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceHigh,
+                      color: context.pal.surfaceHigh,
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: AppColors.outline),
+                      border: Border.all(color: context.pal.outline),
                     ),
                     child: Text(
                       name,
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
+                        color: context.pal.textSecondary,
                       ),
                     ),
                   ),
@@ -583,7 +583,7 @@ class _ProgressButton extends StatelessWidget {
     return PopupMenuButton<int>(
       tooltip: 'Marcar progreso',
       position: PopupMenuPosition.under,
-      color: AppColors.surfaceHighest,
+      color: context.pal.surfaceHighest,
       onSelected: onChanged,
       itemBuilder: (BuildContext context) => const <PopupMenuItem<int>>[
         PopupMenuItem<int>(value: 0, child: _ProgressOption('Sin empezar')),
@@ -597,9 +597,9 @@ class _ProgressButton extends StatelessWidget {
         height: 50,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: AppColors.surfaceHigh,
+          color: context.pal.surfaceHigh,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(color: context.pal.outline),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -611,7 +611,7 @@ class _ProgressButton extends StatelessWidget {
               size: 17,
               color: percent >= 100
                   ? AppColors.success
-                  : AppColors.textSecondary,
+                  : context.pal.textSecondary,
             ),
             const SizedBox(height: 1),
             Text(
@@ -621,7 +621,7 @@ class _ProgressButton extends StatelessWidget {
                 fontWeight: FontWeight.w800,
                 color: percent >= 100
                     ? AppColors.success
-                    : AppColors.textDisabled,
+                    : context.pal.textDisabled,
               ),
             ),
           ],
@@ -643,7 +643,7 @@ class _ProgressOption extends StatelessWidget {
         const Icon(
           Icons.circle_outlined,
           size: 15,
-          color: AppColors.textSecondary,
+          color: context.pal.textSecondary,
         ),
         const SizedBox(width: 10),
         Text(label, style: const TextStyle(fontSize: 13.5)),
@@ -738,7 +738,7 @@ class _FactsGrid extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Icon(fact.icon, size: 17, color: AppColors.textDisabled),
+                Icon(fact.icon, size: 17, color: context.pal.textDisabled),
                 const SizedBox(width: 11),
                 SizedBox(
                   width: 108,
@@ -747,7 +747,7 @@ class _FactsGrid extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textDisabled,
+                      color: context.pal.textDisabled,
                     ),
                   ),
                 ),
@@ -757,7 +757,7 @@ class _FactsGrid extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: context.pal.textPrimary,
                       height: 1.4,
                     ),
                   ),
@@ -847,7 +847,7 @@ class _SeasonTile extends ConsumerWidget {
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
         childrenPadding: const EdgeInsets.only(bottom: 10),
         iconColor: AppColors.crimson,
-        collapsedIconColor: AppColors.textDisabled,
+        collapsedIconColor: context.pal.textDisabled,
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(7),
           child: SizedBox(
@@ -874,7 +874,7 @@ class _SeasonTile extends ConsumerWidget {
             ]),
             style: const TextStyle(
               fontSize: 11.5,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ),
         ),
@@ -924,7 +924,7 @@ class _EpisodeList extends ConsumerWidget {
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Text(
               'Todavía no hay episodios publicados para esta temporada.',
-              style: TextStyle(fontSize: 12.5, color: AppColors.textDisabled),
+              style: TextStyle(fontSize: 12.5, color: context.pal.textDisabled),
             ),
           );
         }
@@ -955,7 +955,7 @@ class _EpisodeTile extends StatelessWidget {
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.surfaceHigh,
+              color: context.pal.surfaceHigh,
               borderRadius: BorderRadius.circular(9),
             ),
             child: Text(
@@ -963,7 +963,7 @@ class _EpisodeTile extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textSecondary,
+                color: context.pal.textSecondary,
               ),
             ),
           ),
@@ -993,7 +993,7 @@ class _EpisodeTile extends StatelessWidget {
                   ]),
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppColors.textDisabled,
+                    color: context.pal.textDisabled,
                   ),
                 ),
                 if (episode.overview.isNotEmpty) ...<Widget>[
@@ -1005,7 +1005,7 @@ class _EpisodeTile extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 11.5,
                       height: 1.45,
-                      color: AppColors.textSecondary,
+                      color: context.pal.textSecondary,
                     ),
                   ),
                 ],

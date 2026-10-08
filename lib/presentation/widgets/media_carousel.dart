@@ -56,7 +56,7 @@ class MediaCarousel extends StatelessWidget {
             child: Text(
               emptyMessage ?? 'Nada por aquí todavía.',
               style: const TextStyle(
-                color: AppColors.textDisabled,
+                color: context.pal.textDisabled,
                 fontSize: 13,
               ),
             ),

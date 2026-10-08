@@ -30,7 +30,7 @@ class RatingBadge extends StatelessWidget {
 
   /// Color semáforo según la puntuación.
   Color get color {
-    if (!hasValue) return AppColors.textDisabled;
+    if (!hasValue) return context.pal.textDisabled;
     if (voteAverage >= 7.5) return AppColors.success;
     if (voteAverage >= 6) return const Color(0xFF9BE15D);
     if (voteAverage >= 4.5) return AppColors.warning;
@@ -110,14 +110,14 @@ class MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHighest.withValues(alpha: 0.85),
+        color: context.pal.surfaceHighest.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (icon != null) ...<Widget>[
-            Icon(icon, size: 12, color: AppColors.textSecondary),
+            Icon(icon, size: 12, color: context.pal.textSecondary),
             const SizedBox(width: 4),
           ],
           Text(
@@ -125,7 +125,7 @@ class MetaChip extends StatelessWidget {
             style: const TextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              color: context.pal.textSecondary,
               height: 1.2,
             ),
           ),

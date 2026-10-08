@@ -242,7 +242,7 @@ class _BrandMark extends StatelessWidget {
               fontSize: 19,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.6,
-              color: AppColors.textPrimary,
+              color: context.pal.textPrimary,
             ),
           ),
         ],

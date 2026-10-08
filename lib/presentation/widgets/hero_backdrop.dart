@@ -165,7 +165,7 @@ class _HeroSlide extends ConsumerWidget {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: <Color>[
-                AppColors.background.withValues(alpha: 0.55),
+                context.pal.background.withValues(alpha: 0.55),
                 Colors.transparent,
               ],
             ),
@@ -194,7 +194,7 @@ class _HeroSlide extends ConsumerWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            color: AppColors.textSecondary,
+                            color: context.pal.textSecondary,
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                           ),
@@ -227,7 +227,7 @@ class _HeroSlide extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: AppColors.textSecondary,
+                    color: context.pal.textSecondary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                   ),

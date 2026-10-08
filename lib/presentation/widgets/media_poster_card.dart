@@ -86,7 +86,7 @@ class MediaPosterCard extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.text.bodySmall?.copyWith(
-                  color: AppColors.textDisabled,
+                  color: context.pal.textDisabled,
                   fontSize: 11.5,
                 ),
               ),
@@ -120,7 +120,7 @@ class _PosterFrame extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: Material(
-        color: AppColors.surfaceHigh,
+        color: context.pal.surfaceHigh,
         borderRadius: BorderRadius.circular(14),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -221,7 +221,7 @@ class MediaBackdropCard extends StatelessWidget {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: Material(
-              color: AppColors.surfaceHigh,
+              color: context.pal.surfaceHigh,
               borderRadius: BorderRadius.circular(14),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -276,7 +276,7 @@ class MediaBackdropCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: AppColors.textSecondary,
+                                color: context.pal.textSecondary,
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w500,
                               ),

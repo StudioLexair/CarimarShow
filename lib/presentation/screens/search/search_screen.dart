@@ -247,7 +247,7 @@ class _SuggestionsList extends StatelessWidget {
           child: Text(
             'Tendencias ahora',
             style: context.text.titleSmall?.copyWith(
-              color: AppColors.textSecondary,
+              color: context.pal.textSecondary,
             ),
           ),
         ),

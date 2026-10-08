@@ -67,13 +67,13 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
             tooltip: user?.displayName ?? 'Perfil',
             icon: CircleAvatar(
               radius: 15,
-              backgroundColor: AppColors.surfaceHigh,
+              backgroundColor: context.pal.surfaceHigh,
               child: Text(
                 user?.initials ?? '?',
                 style: const TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textSecondary,
+                  color: context.pal.textSecondary,
                 ),
               ),
             ),

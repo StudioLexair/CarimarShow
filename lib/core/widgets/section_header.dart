@@ -93,7 +93,7 @@ class ThinDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: indent),
-      child: Divider(color: AppColors.outline.withValues(alpha: 0.6)),
+      child: Divider(color: context.pal.outline.withValues(alpha: 0.6)),
     );
   }
 }

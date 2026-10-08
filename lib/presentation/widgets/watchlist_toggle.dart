@@ -155,7 +155,7 @@ class _LabeledToggle extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(0, 50),
                   side: BorderSide(
-                    color: AppColors.outline.withValues(alpha: 0.9),
+                    color: context.pal.outline.withValues(alpha: 0.9),
                   ),
                 ),
                 icon: pending

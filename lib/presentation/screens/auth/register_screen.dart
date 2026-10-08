@@ -204,7 +204,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               LinearProgressIndicator(
                                 value: value,
                                 minHeight: 4,
-                                backgroundColor: AppColors.surfaceHighest,
+                                backgroundColor: context.pal.surfaceHighest,
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   _strengthColor,
                                 ),

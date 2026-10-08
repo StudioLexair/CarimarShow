@@ -8,6 +8,95 @@ import 'app_colors.dart';
 ///
 /// La app es oscura por diseño (un catálogo de cine se ve mejor así), pero se
 /// expone [buildLight] para quien prefiera forzar el tema claro desde Ajustes.
+/// Colores que CAMBIAN entre el tema claro y el oscuro.
+///
+/// Hasta ahora los widgets leían superficies y textos de [AppColors], que son
+/// constantes oscuras: el tema claro salía con tarjetas negras sobre fondo
+/// blanco. Esta extensión es la única fuente de verdad de esos colores y cada
+/// tema registra su instancia, así que `context.pal.surface` da el valor
+/// correcto en cualquier modo sin cambiar una sola llamada en los widgets.
+class AppPal extends ThemeExtension<AppPal> {
+  const AppPal({
+    required this.background,
+    required this.surface,
+    required this.surfaceHigh,
+    required this.surfaceHighest,
+    required this.outline,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textDisabled,
+  });
+
+  /// Azul noche profundo con tinte turquesa.
+  static const AppPal dark = AppPal(
+    background: Color(0xFF06161C),
+    surface: Color(0xFF0B232B),
+    surfaceHigh: Color(0xFF10303A),
+    surfaceHighest: Color(0xFF16404B),
+    outline: Color(0xFF1E4A57),
+    textPrimary: Color(0xFFEAF7F9),
+    textSecondary: Color(0xFFA7C6CD),
+    textDisabled: Color(0xFF628891),
+  );
+
+  /// Menta muy claro, tarjetas blancas y texto azul tinta: legible y acorde
+  /// al logotipo, no un gris genérico de Material.
+  static const AppPal light = AppPal(
+    background: Color(0xFFF2F8F9),
+    surface: Color(0xFFFFFFFF),
+    surfaceHigh: Color(0xFFE8F3F5),
+    surfaceHighest: Color(0xFFDCEBED),
+    outline: Color(0xFFB9D4DA),
+    textPrimary: Color(0xFF0B2E38),
+    textSecondary: Color(0xFF40626C),
+    textDisabled: Color(0xFF7FA0A9),
+  );
+
+  final Color background;
+  final Color surface;
+  final Color surfaceHigh;
+  final Color surfaceHighest;
+  final Color outline;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textDisabled;
+
+  @override
+  AppPal copyWith({
+    Color? background,
+    Color? surface,
+    Color? surfaceHigh,
+    Color? surfaceHighest,
+    Color? outline,
+    Color? textPrimary,
+    Color? textSecondary,
+    Color? textDisabled,
+  }) => AppPal(
+    background: background ?? this.background,
+    surface: surface ?? this.surface,
+    surfaceHigh: surfaceHigh ?? this.surfaceHigh,
+    surfaceHighest: surfaceHighest ?? this.surfaceHighest,
+    outline: outline ?? this.outline,
+    textPrimary: textPrimary ?? this.textPrimary,
+    textSecondary: textSecondary ?? this.textSecondary,
+    textDisabled: textDisabled ?? this.textDisabled,
+  );
+
+  @override
+  AppPal lerp(AppPal? other, double t) => other == null
+      ? this
+      : AppPal(
+          background: Color.lerp(background, other.background, t)!,
+          surface: Color.lerp(surface, other.surface, t)!,
+          surfaceHigh: Color.lerp(surfaceHigh, other.surfaceHigh, t)!,
+          surfaceHighest: Color.lerp(surfaceHighest, other.surfaceHighest, t)!,
+          outline: Color.lerp(outline, other.outline, t)!,
+          textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
+          textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
+          textDisabled: Color.lerp(textDisabled, other.textDisabled, t)!,
+        );
+}
+
 abstract final class AppTheme {
   static const double _radius = 14;
 
@@ -19,41 +108,42 @@ abstract final class AppTheme {
 
   static ThemeData _base(Brightness brightness) {
     final bool isDark = brightness == Brightness.dark;
-
-    final ColorScheme scheme = ColorScheme.fromSeed(
-      seedColor: AppColors.crimson,
-      brightness: brightness,
-      surface: isDark ? AppColors.surface : const Color(0xFFFAFAFC),
-    );
+    final AppPal pal = isDark ? AppPal.dark : AppPal.light;
 
     // Nota: no se usan `background`/`onBackground` porque quedaron retirados
     // de ColorScheme en favor de `surface`/`onSurface` + los contenedores.
-    final ColorScheme resolved = isDark
-        ? scheme.copyWith(
-            primary: AppColors.crimson,
-            onPrimary: Colors.white,
-            surface: AppColors.surface,
-            onSurface: AppColors.textPrimary,
-            surfaceContainerLowest: AppColors.background,
-            surfaceContainerLow: AppColors.surface,
-            surfaceContainer: AppColors.surfaceHigh,
-            surfaceContainerHigh: AppColors.surfaceHigh,
-            surfaceContainerHighest: AppColors.surfaceHighest,
-            outline: AppColors.outline,
-            outlineVariant: AppColors.outline.withValues(alpha: 0.5),
-            secondary: AppColors.gold,
-            onSecondary: Colors.black,
-            error: AppColors.danger,
-          )
-        : scheme;
+    final ColorScheme resolved =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.accent,
+          brightness: brightness,
+        ).copyWith(
+          primary: AppColors.accent,
+          onPrimary: isDark ? Colors.white : Colors.white,
+          primaryContainer: isDark
+              ? AppColors.accentDeep
+              : AppColors.accentLight,
+          onPrimaryContainer: isDark ? Colors.white : const Color(0xFF06303B),
+          secondary: AppColors.gold,
+          onSecondary: Colors.black,
+          error: AppColors.danger,
+          surface: pal.surface,
+          onSurface: pal.textPrimary,
+          onSurfaceVariant: pal.textSecondary,
+          surfaceContainerLowest: pal.background,
+          surfaceContainerLow: pal.surface,
+          surfaceContainer: pal.surfaceHigh,
+          surfaceContainerHigh: pal.surfaceHigh,
+          surfaceContainerHighest: pal.surfaceHighest,
+          outline: pal.outline,
+          outlineVariant: pal.outline.withValues(alpha: 0.5),
+        );
 
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: resolved,
-      scaffoldBackgroundColor: isDark
-          ? AppColors.background
-          : const Color(0xFFFAFAFC),
+      extensions: <ThemeExtension<dynamic>>[pal],
+      scaffoldBackgroundColor: pal.background,
       splashFactory: InkSparkle.splashFactory,
       visualDensity: VisualDensity.standard,
 
@@ -385,4 +475,7 @@ extension AppThemeX on BuildContext {
   ThemeData get theme => Theme.of(this);
   ColorScheme get colors => Theme.of(this).colorScheme;
   TextTheme get text => Theme.of(this).textTheme;
+
+  /// Colores dependientes del tema (superficies y textos).
+  AppPal get pal => Theme.of(this).extension<AppPal>()!;
 }

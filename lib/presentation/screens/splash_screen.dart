@@ -18,7 +18,7 @@ class SplashScreen extends ConsumerWidget {
     final bool isDemo = ref.watch(demoModeProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.pal.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +36,7 @@ class SplashScreen extends ConsumerWidget {
             const Text(
               Strings.appName,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: context.pal.textPrimary,
                 fontSize: 32,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -1.2,
@@ -49,7 +49,7 @@ class SplashScreen extends ConsumerWidget {
                 Strings.appTagline,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: AppColors.textSecondary,
+                  color: context.pal.textSecondary,
                   fontSize: 13,
                   height: 1.4,
                 ),
@@ -65,7 +65,7 @@ class SplashScreen extends ConsumerWidget {
             Text(
               isDemo ? 'Preparando catálogo local…' : 'Comprobando tu sesión…',
               style: const TextStyle(
-                color: AppColors.textDisabled,
+                color: context.pal.textDisabled,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

@@ -161,7 +161,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen>
                       onRefresh: () =>
                           ref.read(catalogProvider(_query).notifier).load(),
                       color: AppColors.crimson,
-                      backgroundColor: AppColors.surfaceHigh,
+                      backgroundColor: context.pal.surfaceHigh,
                       child: MediaGrid(
                         items: state.items,
                         hasMore: state.hasMore,
@@ -181,7 +181,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen>
                         bottom: 12,
                         child: Center(
                           child: Material(
-                            color: AppColors.surfaceHighest,
+                            color: context.pal.surfaceHighest,
                             borderRadius: BorderRadius.circular(999),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -253,7 +253,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen>
                   size: 20,
                   color: (_sortBy ?? 'popularity.desc') == option
                       ? AppColors.crimson
-                      : AppColors.textDisabled,
+                      : context.pal.textDisabled,
                 ),
                 title: Text(
                   TmdbSortBy.label(option),
@@ -311,7 +311,9 @@ class _FilterBar extends StatelessWidget {
               avatar: Icon(
                 Icons.sort_rounded,
                 size: 16,
-                color: sortBy != null ? Colors.white : AppColors.textSecondary,
+                color: sortBy != null
+                    ? Colors.white
+                    : context.pal.textSecondary,
               ),
               label: Text(
                 sortBy == null ? 'Orden' : TmdbSortBy.label(sortBy!),

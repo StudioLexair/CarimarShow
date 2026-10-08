@@ -43,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),
         color: AppColors.crimson,
-        backgroundColor: AppColors.surfaceHigh,
+        backgroundColor: context.pal.surfaceHigh,
         child: feed.when(
           loading: () => const _HomeSkeleton(),
           error: (Object error, StackTrace stackTrace) => _HomeError(
@@ -106,7 +106,7 @@ class _HomeContent extends ConsumerWidget {
         SliverAppBar(
           floating: true,
           snap: false,
-          backgroundColor: AppColors.background.withValues(alpha: 0.86),
+          backgroundColor: context.pal.background.withValues(alpha: 0.86),
           surfaceTintColor: Colors.transparent,
           titleSpacing: 16,
           title: Row(
@@ -288,7 +288,7 @@ class _FooterAttribution extends ConsumerWidget {
           style: TextStyle(
             fontSize: 11.5,
             height: 1.5,
-            color: AppColors.textDisabled,
+            color: context.pal.textDisabled,
           ),
         ),
       );
@@ -305,7 +305,7 @@ class _FooterAttribution extends ConsumerWidget {
             style: TextStyle(
               fontSize: 11,
               height: 1.5,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ),
           const SizedBox(height: 6),
@@ -314,7 +314,7 @@ class _FooterAttribution extends ConsumerWidget {
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: AppColors.textDisabled,
+              color: context.pal.textDisabled,
             ),
           ),
         ],

@@ -81,7 +81,7 @@ class InlineAuthError extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12.5,
                 height: 1.4,
-                color: AppColors.textPrimary,
+                color: context.pal.textPrimary,
               ),
             ),
           ),
@@ -124,9 +124,9 @@ class NoBackendNotice extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surfaceHigh,
+        color: context.pal.surfaceHigh,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: context.pal.outline),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

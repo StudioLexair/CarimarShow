@@ -50,7 +50,7 @@ class CastRow extends StatelessWidget {
                         fontSize: 11.5,
                         fontWeight: FontWeight.w700,
                         height: 1.2,
-                        color: AppColors.textPrimary,
+                        color: context.pal.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -62,7 +62,7 @@ class CastRow extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 10.5,
                         height: 1.2,
-                        color: AppColors.textDisabled,
+                        color: context.pal.textDisabled,
                       ),
                     ),
                   ],

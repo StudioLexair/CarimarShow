@@ -97,7 +97,7 @@ class AppErrorView extends StatelessWidget {
                 visual.hint!,
                 textAlign: TextAlign.center,
                 style: context.text.bodySmall?.copyWith(
-                  color: AppColors.textDisabled,
+                  color: context.pal.textDisabled,
                 ),
               ),
             ],
@@ -174,7 +174,7 @@ class AppErrorView extends StatelessWidget {
       ),
       AppFailureKind.notFound => const _ErrorVisual(
         icon: Icons.search_off_rounded,
-        color: AppColors.textSecondary,
+        color: context.pal.textSecondary,
         title: 'No encontrado',
         hint: 'El título puede haber sido retirado del catálogo.',
       ),
@@ -211,12 +211,12 @@ class AppErrorView extends StatelessWidget {
       ),
       AppFailureKind.cancelled => const _ErrorVisual(
         icon: Icons.cancel_outlined,
-        color: AppColors.textSecondary,
+        color: context.pal.textSecondary,
         title: 'Operación cancelada',
       ),
       AppFailureKind.unknown => const _ErrorVisual(
         icon: Icons.report_gmailerrorred_rounded,
-        color: AppColors.textSecondary,
+        color: context.pal.textSecondary,
         title: 'Algo ha salido mal',
       ),
     };
@@ -264,10 +264,10 @@ class EmptyStateView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: AppColors.surfaceHigh,
+                color: context.pal.surfaceHigh,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 32, color: AppColors.textSecondary),
+              child: Icon(icon, size: 32, color: context.pal.textSecondary),
             ),
             const SizedBox(height: 20),
             Text(

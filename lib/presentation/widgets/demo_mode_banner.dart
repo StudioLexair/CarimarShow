@@ -18,7 +18,7 @@ class DemoModeBanner extends ConsumerWidget {
     if (!isDemo) return const SizedBox.shrink();
 
     return Material(
-      color: AppColors.surfaceHigh,
+      color: context.pal.surfaceHigh,
       child: InkWell(
         onTap: () => _showHelp(context),
         child: Padding(
@@ -37,7 +37,7 @@ class DemoModeBanner extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary,
+                    color: context.pal.textSecondary,
                     height: 1.3,
                   ),
                 ),
@@ -45,7 +45,7 @@ class DemoModeBanner extends ConsumerWidget {
               const Icon(
                 Icons.chevron_right_rounded,
                 size: 18,
-                color: AppColors.textDisabled,
+                color: context.pal.textDisabled,
               ),
             ],
           ),
@@ -112,9 +112,9 @@ class _DemoHelpSheet extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: context.pal.surface,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.outline),
+                border: Border.all(color: context.pal.outline),
               ),
               child: const Text(
                 'flutter run --dart-define=TMDB_READ_TOKEN=tu_token',
