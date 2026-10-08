@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
-import '../../core/theme/app_colors.dart';
 import '../providers/core_providers.dart';
 
 /// Pantalla de arranque.

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
 import '../../core/widgets/poster_image.dart';
 import '../../core/widgets/section_header.dart';
 import '../../domain/entities/media_item.dart';
