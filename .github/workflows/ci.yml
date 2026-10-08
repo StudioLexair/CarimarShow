@@ -76,13 +76,16 @@ jobs:
         run: dart format --output=none --set-exit-if-changed lib test
 
       # ── Puerta 2: análisis estático ─────────────────────────────────────
-      # `--fatal-warnings` bloquea ante código muerto, deprecaciones y errores
-      # de tipos. Los *infos* de estilo (p. ej. `prefer_const_constructors`) se
-      # ven en el log pero no tumbar el build: reescribirlos en cascada toca
-      # consts anidados en media docena de widgets y ese cambio es de una PR
-      # dedicada, no de una de funcionalidad.
+      # En `flutter analyze` (a diferencia de `dart analyze`) las flags
+      # `--fatal-warnings` Y `--fatal-infos` vienen activadas por defecto, así
+      # que hay que desactivar los infos a mano si no se quieren fatales.
+      #
+      # Bloqueamos ante warnings (código muerto, deprecaciones, errores de
+      # tipos). Los infos de estilo que quedan son 17 `prefer_const_constructors`
+      # anidados: reescribirlos en cascada toca consts en media docena de
+      # widgets y merece una PR dedicada, no colarse en una de funcionalidad.
       - name: Analizar
-        run: flutter analyze --fatal-warnings
+        run: flutter analyze --fatal-warnings --no-fatal-infos
 
       # ── Puerta 3: tests ─────────────────────────────────────────────────
       # `app_smoke_test.dart` bombea la app completa y pide ~2 GB de RAM. El
