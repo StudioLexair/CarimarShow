@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/core_providers.dart';
 
@@ -31,7 +32,7 @@ class DemoModeBanner extends ConsumerWidget {
                 color: AppColors.gold,
               ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Modo demo: catálogo ficticio local. Toca para configurar TMDB.',
                   style: TextStyle(
@@ -42,7 +43,7 @@ class DemoModeBanner extends ConsumerWidget {
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right_rounded,
                 size: 18,
                 color: context.pal.textDisabled,

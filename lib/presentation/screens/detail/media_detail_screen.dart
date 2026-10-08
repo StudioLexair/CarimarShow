@@ -165,7 +165,7 @@ class _DetailContent extends ConsumerWidget {
                         ),
                         child: Text(
                           keyword,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
                             color: context.pal.textSecondary,
@@ -299,7 +299,7 @@ class _HeroHeader extends StatelessWidget {
                         details.tagline!,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: context.pal.textSecondary,
                           fontSize: 12.5,
                           fontStyle: FontStyle.italic,
@@ -396,7 +396,7 @@ class _TitleBlock extends StatelessWidget {
                     ),
                     child: Text(
                       name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w600,
                         color: context.pal.textSecondary,
@@ -640,11 +640,7 @@ class _ProgressOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Icon(
-          Icons.circle_outlined,
-          size: 15,
-          color: context.pal.textSecondary,
-        ),
+        Icon(Icons.circle_outlined, size: 15, color: context.pal.textSecondary),
         const SizedBox(width: 10),
         Text(label, style: const TextStyle(fontSize: 13.5)),
       ],
@@ -744,7 +740,7 @@ class _FactsGrid extends StatelessWidget {
                   width: 108,
                   child: Text(
                     fact.label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       color: context.pal.textDisabled,
@@ -754,7 +750,7 @@ class _FactsGrid extends StatelessWidget {
                 Expanded(
                   child: Text(
                     fact.value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       color: context.pal.textPrimary,
@@ -872,10 +868,7 @@ class _SeasonTile extends ConsumerWidget {
               if (season.hasEpisodes) '${season.episodeCount} ep.',
               if (season.airDate != null) Formatters.year(season.airDate),
             ]),
-            style: const TextStyle(
-              fontSize: 11.5,
-              color: context.pal.textDisabled,
-            ),
+            style: TextStyle(fontSize: 11.5, color: context.pal.textDisabled),
           ),
         ),
         // Los episodios se piden solo al desplegar la temporada, no de golpe.
@@ -920,7 +913,7 @@ class _EpisodeList extends ConsumerWidget {
       ),
       data: (List<Episode> list) {
         if (list.isEmpty) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Text(
               'Todavía no hay episodios publicados para esta temporada.',
@@ -960,7 +953,7 @@ class _EpisodeTile extends StatelessWidget {
             ),
             child: Text(
               '${episode.number}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w800,
                 color: context.pal.textSecondary,
@@ -991,7 +984,7 @@ class _EpisodeTile extends StatelessWidget {
                     if (episode.voteAverage > 0)
                       '★ ${Formatters.vote(episode.voteAverage)}',
                   ]),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: context.pal.textDisabled,
                   ),
@@ -1002,7 +995,7 @@ class _EpisodeTile extends StatelessWidget {
                     episode.overview,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
                       height: 1.45,
                       color: context.pal.textSecondary,

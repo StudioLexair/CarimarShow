@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/theme/app_theme.dart';
 import '../../../core/constants/business_info.dart';
 import '../../../core/utils/share_service.dart';
 import '../../../core/theme/app_colors.dart';
@@ -270,7 +271,7 @@ class _TypeFilters extends ConsumerWidget {
           IconButton(
             tooltip: 'Vaciar lista',
             visualDensity: VisualDensity.compact,
-            icon: const Icon(
+            icon: Icon(
               Icons.delete_sweep_outlined,
               size: 20,
               color: context.pal.textDisabled,
@@ -375,7 +376,7 @@ class _WatchlistTile extends ConsumerWidget {
                       ]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11.5,
                         color: context.pal.textDisabled,
                         fontWeight: FontWeight.w600,
@@ -398,7 +399,7 @@ class _WatchlistTile extends ConsumerWidget {
                       const SizedBox(height: 3),
                       Text(
                         '${item.progressPercent}% visto',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 10.5,
                           color: context.pal.textDisabled,
                         ),
@@ -412,7 +413,7 @@ class _WatchlistTile extends ConsumerWidget {
               IconButton(
                 tooltip: 'Quitar de Mi lista',
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(
+                icon: Icon(
                   Icons.close_rounded,
                   size: 18,
                   color: context.pal.textDisabled,
@@ -460,7 +461,7 @@ class _StatusSelector extends ConsumerWidget {
                     size: 17,
                     color: status == item.status
                         ? AppColors.crimson
-                        : context.pal.textSecondary,
+                        : AppColors.accent,
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -511,7 +512,7 @@ class _StatusSelector extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 3),
-            const Icon(
+            Icon(
               Icons.expand_more_rounded,
               size: 15,
               color: context.pal.textDisabled,
@@ -529,7 +530,7 @@ class _StatusSelector extends ConsumerWidget {
   };
 
   static Color _colorFor(WatchlistStatus status) => switch (status) {
-    WatchlistStatus.planned => context.pal.textSecondary,
+    WatchlistStatus.planned => AppColors.accent,
     WatchlistStatus.watching => AppColors.gold,
     WatchlistStatus.completed => AppColors.success,
   };

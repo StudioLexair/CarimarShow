@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../../domain/entities/app_user.dart';
@@ -70,7 +71,7 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
               backgroundColor: context.pal.surfaceHigh,
               child: Text(
                 user?.initials ?? '?',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11.5,
                   fontWeight: FontWeight.w800,
                   color: context.pal.textSecondary,

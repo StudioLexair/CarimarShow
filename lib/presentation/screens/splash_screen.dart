@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/core_providers.dart';
@@ -33,7 +34,7 @@ class SplashScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 26),
-            const Text(
+            Text(
               Strings.appName,
               style: TextStyle(
                 color: context.pal.textPrimary,
@@ -43,7 +44,7 @@ class SplashScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: Text(
                 Strings.appTagline,
@@ -64,7 +65,7 @@ class SplashScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Text(
               isDemo ? 'Preparando catálogo local…' : 'Comprobando tu sesión…',
-              style: const TextStyle(
+              style: TextStyle(
                 color: context.pal.textDisabled,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

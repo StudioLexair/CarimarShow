@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/poster_image.dart';
@@ -193,7 +194,7 @@ class _HeroSlide extends ConsumerWidget {
                           '${Formatters.voteCount(item.voteCount)} votos',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: context.pal.textSecondary,
                             fontSize: 11.5,
                             fontWeight: FontWeight.w600,
@@ -226,7 +227,7 @@ class _HeroSlide extends ConsumerWidget {
                   ]),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: context.pal.textSecondary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,

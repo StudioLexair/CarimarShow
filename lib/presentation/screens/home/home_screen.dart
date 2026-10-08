@@ -280,7 +280,7 @@ class _FooterAttribution extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isDemo = ref.watch(demoModeProvider);
     if (isDemo) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.fromLTRB(24, 24, 24, 32),
         child: Text(
           'Catálogo ficticio de demostración. Ningún título mostrado existe.',
@@ -298,7 +298,7 @@ class _FooterAttribution extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
       child: Column(
         children: <Widget>[
-          const Text(
+          Text(
             'Este producto usa la API de TMDB pero no está avalado ni '
             'certificado por TMDB.',
             textAlign: TextAlign.center,
@@ -311,7 +311,7 @@ class _FooterAttribution extends ConsumerWidget {
           const SizedBox(height: 6),
           Text(
             'CarimarShow · ${Formatters.year(DateTime.now())}',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
               color: context.pal.textDisabled,

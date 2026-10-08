@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/poster_image.dart';
 import '../../core/widgets/section_header.dart';
@@ -55,10 +56,7 @@ class MediaCarousel extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               emptyMessage ?? 'Nada por aquí todavía.',
-              style: const TextStyle(
-                color: context.pal.textDisabled,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: context.pal.textDisabled, fontSize: 13),
             ),
           )
         else

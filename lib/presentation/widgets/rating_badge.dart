@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_theme.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/formatters.dart';
 
@@ -117,15 +118,15 @@ class MetaChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (icon != null) ...<Widget>[
-            Icon(icon, size: 12, color: context.pal.textSecondary),
+            Icon(icon, size: 12, color: AppColors.textPrimary),
             const SizedBox(width: 4),
           ],
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
-              color: context.pal.textSecondary,
+              color: AppColors.textPrimary,
               height: 1.2,
             ),
           ),

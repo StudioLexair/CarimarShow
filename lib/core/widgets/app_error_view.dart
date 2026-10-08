@@ -172,9 +172,9 @@ class AppErrorView extends StatelessWidget {
             'Revisa TMDB_READ_TOKEN en tu archivo .env. '
             'Puede que el token esté caducado o revocado.',
       ),
-      AppFailureKind.notFound => const _ErrorVisual(
+      AppFailureKind.notFound => _ErrorVisual(
         icon: Icons.search_off_rounded,
-        color: context.pal.textSecondary,
+        color: AppColors.accent,
         title: 'No encontrado',
         hint: 'El título puede haber sido retirado del catálogo.',
       ),
@@ -209,14 +209,14 @@ class AppErrorView extends StatelessWidget {
         title: 'Datos inesperados',
         hint: 'La respuesta del servidor no tiene el formato esperado.',
       ),
-      AppFailureKind.cancelled => const _ErrorVisual(
+      AppFailureKind.cancelled => _ErrorVisual(
         icon: Icons.cancel_outlined,
-        color: context.pal.textSecondary,
+        color: AppColors.accent,
         title: 'Operación cancelada',
       ),
-      AppFailureKind.unknown => const _ErrorVisual(
+      AppFailureKind.unknown => _ErrorVisual(
         icon: Icons.report_gmailerrorred_rounded,
-        color: context.pal.textSecondary,
+        color: AppColors.accent,
         title: 'Algo ha salido mal',
       ),
     };
@@ -267,7 +267,7 @@ class EmptyStateView extends StatelessWidget {
                 color: context.pal.surfaceHigh,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 32, color: context.pal.textSecondary),
+              child: Icon(icon, size: 32, color: AppColors.accent),
             ),
             const SizedBox(height: 20),
             Text(

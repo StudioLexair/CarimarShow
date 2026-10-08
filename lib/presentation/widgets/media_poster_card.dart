@@ -275,7 +275,7 @@ class MediaBackdropCard extends StatelessWidget {
                               subtitle!,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: context.pal.textSecondary,
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w500,

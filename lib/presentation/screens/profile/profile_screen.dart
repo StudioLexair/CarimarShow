@@ -307,7 +307,7 @@ class _ProfileHeader extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   'Miembro desde ${Formatters.shortDate(user!.createdAt)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     color: context.pal.textDisabled,
                   ),
@@ -354,7 +354,7 @@ class _StatsRow extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     cells[i].value,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 21,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.6,
@@ -366,7 +366,7 @@ class _StatsRow extends StatelessWidget {
                     cells[i].label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w600,
                       color: context.pal.textDisabled,
@@ -393,7 +393,7 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         text.toUpperCase(),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.0,
@@ -584,7 +584,7 @@ class _InfoTile extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
                       subtitle!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         height: 1.4,
                         color: context.pal.textDisabled,
@@ -713,7 +713,7 @@ class _AboutBox extends StatelessWidget {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
               ),
               const Spacer(),
-              const Text(
+              Text(
                 'v0.1.0',
                 style: TextStyle(
                   fontSize: 11.5,
@@ -724,7 +724,7 @@ class _AboutBox extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             Strings.tmdbAttribution,
             style: TextStyle(
               fontSize: 11.5,
@@ -733,7 +733,7 @@ class _AboutBox extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'Aplicación de demostración. No reproduce ni aloja contenido: solo '
             'muestra información pública de catálogos.',
             style: TextStyle(

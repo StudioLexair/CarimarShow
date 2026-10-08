@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../core/theme/app_theme.dart';
 import '../constants/tmdb_constants.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
