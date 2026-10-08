@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Dudas de configuración
+    url: https://github.com/StudioLexair/SinFlix/blob/main/docs/SETUP.md
+    about: Token de TMDB, Supabase, migraciones y publicación por plataforma.
+  - name: Vulnerabilidades de seguridad
+    url: https://github.com/StudioLexair/SinFlix/security/advisories/new
+    about: No las publiques como issue. Reporta en privado y respondemos en ~72 h.
+  - name: Cómo funciona por dentro
+    url: https://github.com/StudioLexair/SinFlix/blob/main/docs/ARCHITECTURE.md
+    about: Las diez decisiones de arquitectura y sus motivos.

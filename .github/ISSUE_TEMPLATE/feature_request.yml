@@ -1,0 +1,36 @@
+name: Proponer una mejora
+description: Una funcionalidad nueva, un cambio de comportamiento o una idea.
+title: "[mejora] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description: |
+        Empieza por el problema, no por la solución. «Me cuesta encontrar lo que
+        ya empecé a ver» es mejor que «añadir un botón rojo arriba».
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Tu propuesta
+    validations:
+      required: true
+  - type: textarea
+    id: alternativas
+    attributes:
+      label: Alternativas que has considerado
+    validations:
+      required: false
+  - type: checkboxes
+    id: alcance
+    attributes:
+      label: Encaje con el proyecto
+      description: SinFlix es un catálogo, no un reproductor. Ver «Qué no se ha hecho» en docs/ARCHITECTURE.md.
+      options:
+        - label: No implica reproducir, alojar ni descargar vídeo con copyright
+          required: true
+        - label: Funciona también sin backend (modo local / demo), o tengo claro por qué no puede
+          required: true

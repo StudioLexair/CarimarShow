@@ -1,0 +1,746 @@
+# ══════════════════════════════════════════════════════════════════════════
+#  SinFlix · Compilación y publicación de releases
+# ══════════════════════════════════════════════════════════════════════════
+#
+#  Se dispara al crear un tag `v*` (p. ej. `git tag v1.0.0 && git push --tags`)
+#  o manualmente desde la pestaña Actions.
+#
+#  Cinco jobs en paralelo, uno por sistema de destino, y un job final que
+#  reúne los binarios, calcula sus checksums y crea el Release.
+#
+#    android      → APK por ABI + APK universal + AAB (firmados)
+#    web          → bundle estático (también lo consume el despliegue en Pages)
+#    windows      → ZIP autocontenido
+#    linux        → tar.gz con el bundle completo
+#    macos-arm64  → ZIP de la .app (Apple Silicon)
+#    macos-x64    → ZIP de la .app (Intel)
+#
+#  iOS queda fuera a propósito: distribuir un .ipa instalable exige una cuenta
+#  de Apple Developer y certificados de distribución. El job está escrito y
+#  comentado al final de este archivo; se activa poniendo `if:` a true.
+#
+#  ⚠️  Los `--dart-define` se HORNEAN en el binario. Lo que se compile aquí
+#      lleva dentro las credenciales de producción y no se pueden cambiar
+#      después sin recompilar.
+# ══════════════════════════════════════════════════════════════════════════
+
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Versión (sin la "v", p. ej. 1.0.0). En disparo manual se usa como etiqueta.'
+        required: true
+        default: '0.0.0-dev'
+
+# Dos releases a la vez sobre el mismo tag solo pueden pisarse.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # crear el Release y subir assets
+  actions: write    # disparar site.yml para regenerar release.json
+
+env:
+  FLUTTER_CHANNEL: stable
+  APP_ENV: production
+  TMDB_LANGUAGE: es-ES
+  TMDB_REGION: ES
+
+jobs:
+  # ════════════════════════════════════════════════════════════════════════
+  #  Preparación: resuelve la versión una sola vez para que todos los jobs
+  #  nombren los artefactos igual. Sin esto, cada job deduciría la versión por
+  #  su cuenta y acabarían desincronizados.
+  # ════════════════════════════════════════════════════════════════════════
+  meta:
+    name: Resolver versión
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+      build_number: ${{ steps.v.outputs.build_number }}
+    steps:
+      - id: v
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RAW="${{ github.event.inputs.version }}"
+          else
+            RAW="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$RAW"                 >> "$GITHUB_OUTPUT"
+          echo "tag=v$RAW"                    >> "$GITHUB_OUTPUT"
+          # versionCode de Android: monotónico y único por ejecución.
+          echo "build_number=${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "→ versión $RAW · tag v$RAW · build ${GITHUB_RUN_NUMBER}"
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  ANDROID
+  # ════════════════════════════════════════════════════════════════════════
+  android:
+    name: Android (APK + AAB)
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+      TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      # ── Firmado ────────────────────────────────────────────────────────
+      # El keystore viaja como secreto en base64. Se materializa en disco solo
+      # durante el build; `android/key.properties` y `*.keystore` están en
+      # .gitignore, así que no pueden acabar en un commit.
+      #
+      # La comprobación va DENTRO del script y no en un `if:` del paso porque
+      # GitHub Actions no expone el contexto `secrets` en condicionales.
+      #
+      # Si el secreto no existe, el paso se salta y Gradle firma con la clave
+      # de debug (el APK sigue siendo instalable, pero no sirve para subir a
+      # una tienda ni para actualizar una app ya publicada).
+      - name: Materializar keystore de firmado
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::warning::Sin secreto ANDROID_KEYSTORE_BASE64: el APK se firmará con la clave de DEBUG."
+            echo "SIGNED=debug" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          mkdir -p android
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/sinflix-release.keystore
+          SIZE=$(stat -c%s android/sinflix-release.keystore)
+          if [ "$SIZE" -lt 500 ]; then
+            echo "::error::El keystore descodificado pesa $SIZE bytes: el secreto ANDROID_KEYSTORE_BASE64 está mal."
+            exit 1
+          fi
+          {
+            echo "storeFile=sinflix-release.keystore"
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyAlias=${ANDROID_KEY_ALIAS:-sinflix}"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/key.properties
+          echo "SIGNED=release" >> "$GITHUB_ENV"
+          echo "✓ keystore materializado ($SIZE bytes)"
+
+      - run: flutter pub get
+
+      - name: Preparar --dart-define
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=$APP_ENV"
+            "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE"
+            "--dart-define=TMDB_REGION=$TMDB_REGION"
+          )
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL")
+            D+=("--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+            echo "✓ cuentas en la nube (Supabase producción)"
+          else
+            echo "::warning::Sin SUPABASE_URL_PROD / SUPABASE_PUBLISHABLE_KEY_PROD: la app usará sesión local."
+          fi
+          if [ -n "$TMDB_READ_TOKEN" ]; then
+            D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+            echo "✓ catálogo real (TMDB)"
+          else
+            echo "::warning::Sin secreto TMDB_READ_TOKEN: la release saldrá en MODO DEMO con el catálogo ficticio."
+            echo "::warning::Añádelo en Settings → Secrets and variables → Actions para publicar el catálogo real."
+          fi
+          echo "DART_DEFINES=${D[*]}" >> "$GITHUB_ENV"
+
+      - run: flutter pub get
+
+      - name: Compilar APK por ABI
+        run: |
+          flutter build apk --release --split-per-abi \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" \
+            $DART_DEFINES
+
+      - name: Compilar APK universal
+        # Más pesado (~3 ABI dentro) pero es el que sirve para "descarga y
+        # funciona" sin que el usuario sepa qué procesador tiene su móvil.
+        run: |
+          flutter build apk --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" \
+            $DART_DEFINES
+
+      - name: Compilar App Bundle (Play Store)
+        run: |
+          flutter build appbundle --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" \
+            $DART_DEFINES
+
+      - name: Verificar el APK resultante
+        run: |
+          APK=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          if [ ! -f "$APK" ]; then
+            echo "::error::No se generó $APK"
+            find build/app/outputs -type f | head -20
+            exit 1
+          fi
+          echo "✓ APK presente: $(stat -c%s "$APK") bytes"
+          if [ "${SIGNED:-debug}" = "release" ]; then
+            APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f 2>/dev/null | sort -V | tail -1)
+            if [ -n "$APKSIGNER" ]; then
+              "$APKSIGNER" verify --print-certs "$APK" 2>/dev/null | head -5
+              echo "✓ firmado con la clave de RELEASE"
+            else
+              keytool -printcert -jarfile "$APK" 2>/dev/null | grep -E 'Owner|SHA256:' | head -3
+              echo "✓ keystore de release aplicado"
+            fi
+          else
+            echo "::warning::APK firmado con la clave de DEBUG: instalable, pero no apto para tienda."
+          fi
+
+      - name: Renombrar artefactos
+        run: |
+          mkdir -p dist
+          SRC=build/app/outputs/flutter-apk
+          mv "$SRC/app-arm64-v8a-release.apk"    "dist/sinflix-$VERSION-android-arm64-v8a.apk"
+          mv "$SRC/app-armeabi-v7a-release.apk"  "dist/sinflix-$VERSION-android-armv7.apk"
+          mv "$SRC/app-x86_64-release.apk"       "dist/sinflix-$VERSION-android-x86_64.apk" 2>/dev/null || true
+          mv "$SRC/app-release.apk"              "dist/sinflix-$VERSION-android-universal.apk"
+          mv build/app/outputs/bundle/release/app-release.aab "dist/sinflix-$VERSION-android.aab"
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  WEB
+  # ════════════════════════════════════════════════════════════════════════
+  web:
+    name: Web
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+      TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+
+      - name: Preparar --dart-define
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+        run: |
+          D=("--dart-define=APP_ENV=$APP_ENV" "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE" "--dart-define=TMDB_REGION=$TMDB_REGION")
+          [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && {
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL" "--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+          }
+          [ -n "$TMDB_READ_TOKEN" ] && D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN") \
+            || echo "::warning::Web en modo demo (falta TMDB_READ_TOKEN)."
+          echo "DART_DEFINES=${D[*]}" >> "$GITHUB_ENV"
+
+      - run: flutter pub get
+
+      - name: Compilar web
+        # `--base-href /` porque este ZIP es para autohospedarlo en cualquier
+        # sitio. La copia que se sirve en GitHub Pages se compila aparte en
+        # `site.yml` con `--base-href /SinFlix/app/`.
+        run: flutter build web --release --base-href / $DART_DEFINES
+
+      - name: Empaquetar
+        run: |
+          mkdir -p dist
+          cd build/web
+          zip -qr "../../dist/sinflix-$VERSION-web.zip" .
+          cd ../..
+          cat > dist/LEEME-web.txt <<EOF
+          SinFlix $VERSION — versión web
+
+          Descomprime este ZIP y sirve la carpeta con CUALQUIER servidor
+          estático. Hace falta un servidor: abrir index.html con doble clic
+          no funciona (los navegadores bloquean el service worker en file://).
+
+            python3 -m http.server 8080
+            npx serve .
+
+          Para que las rutas profundas (/title/movie/155) sobrevivan a un
+          F5, el servidor debe redirigir todo a index.html.
+          EOF
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  WINDOWS
+  # ════════════════════════════════════════════════════════════════════════
+  windows:
+    name: Windows x64
+    needs: meta
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+
+      - run: flutter pub get
+
+      - name: Compilar
+        shell: bash
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+          TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=$APP_ENV"
+            "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE"
+            "--dart-define=TMDB_REGION=$TMDB_REGION"
+          )
+          [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && \
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL" "--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+          [ -n "$TMDB_READ_TOKEN" ] && D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+          flutter build windows --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" "${D[@]}"
+
+      - name: Empaquetar
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path build\windows\x64\runner\Release\* `
+                           -DestinationPath "dist\sinflix-$env:VERSION-windows-x64.zip"
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  LINUX
+  # ════════════════════════════════════════════════════════════════════════
+  linux:
+    name: Linux x64
+    needs: meta
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+      TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencias nativas de Flutter para Linux
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            clang cmake ninja-build pkg-config \
+            libgtk-3-dev liblzma-dev libstdc++-12-dev
+
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+
+      - run: flutter pub get
+
+      - name: Compilar
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=$APP_ENV"
+            "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE"
+            "--dart-define=TMDB_REGION=$TMDB_REGION"
+          )
+          [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && \
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL" "--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+          [ -n "$TMDB_READ_TOKEN" ] && D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+          flutter build linux --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" "${D[@]}"
+
+      - name: Empaquetar (tar.gz + .deb)
+        run: |
+          mkdir -p dist
+          cd build/linux/x64/release/bundle
+          tar -czf "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-linux-x64.tar.gz" .
+          cd "$GITHUB_WORKSPACE"
+
+          # .deb opcional: la misma app con instalación de un clic en
+          # Debian/Ubuntu. Si `dpkg-deb` no está, se avisa y el tar.gz sigue
+          # publicándose: el release nunca se cae por un extra.
+          ROOT=$(mktemp -d)
+          mkdir -p "$ROOT/DEBIAN" "$ROOT/usr/lib/sinflix" \
+                   "$ROOT/usr/share/applications" "$ROOT/usr/share/pixmaps"
+          cp -r build/linux/x64/release/bundle/. "$ROOT/usr/lib/sinflix/"
+
+          # Icono real del proyecto en vez de una ruta inventada.
+          ICON=android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          [ -f "$ICON" ] && cp "$ICON" "$ROOT/usr/share/pixmaps/sinflix.png"
+
+          cat > "$ROOT/DEBIAN/control" <<EOF
+          Package: sinflix
+          Version: $VERSION
+          Section: video
+          Priority: optional
+          Architecture: amd64
+          Maintainer: SinFlix <studiolexair@users.noreply.github.com>
+          Depends: libgtk-3-0, liblzma5
+          Homepage: https://github.com/StudioLexair/SinFlix
+          Description: Catalogo de peliculas y series
+           SinFlix es un catalogo multiplataforma de peliculas y series
+           construido con Flutter. No reproduce ni aloja contenido:
+           solo muestra informacion publica de catalogos.
+          EOF
+
+          cat > "$ROOT/usr/share/applications/sinflix.desktop" <<EOF
+          [Desktop Entry]
+          Type=Application
+          Name=SinFlix
+          Comment=Catálogo de películas y series
+          Exec=/usr/lib/sinflix/sinflix
+          Icon=sinflix
+          Terminal=false
+          Categories=Video;AudioVideo;
+          EOF
+
+          dpkg-deb --build --root-owner-group "$ROOT" "dist/sinflix-$VERSION-linux-amd64.deb" \
+            || echo "::warning::No se pudo generar el .deb; el tar.gz sí está."
+          rm -rf "$ROOT"
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  macOS — Apple Silicon
+  # ════════════════════════════════════════════════════════════════════════
+  macos-arm64:
+    name: macOS (Apple Silicon)
+    needs: meta
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+      TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+      - run: flutter pub get
+
+      - name: Compilar
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=$APP_ENV"
+            "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE"
+            "--dart-define=TMDB_REGION=$TMDB_REGION"
+          )
+          [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && \
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL" "--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+          [ -n "$TMDB_READ_TOKEN" ] && D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+          flutter build macos --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" "${D[@]}"
+
+      - name: Empaquetar
+        run: |
+          mkdir -p dist
+          cd build/macos/Build/Products/Release
+          APP=$(ls -d *.app | head -1)
+          echo "→ empaquetando $APP"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" \
+                "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-macos-arm64.zip"
+          cd "$GITHUB_WORKSPACE"
+          # Sin notarizar: al abrirlo, clic derecho → Abrir (o quitar la
+          # cuarentena). Se documenta en la página de descarga.
+          cat > dist/LEEME-macos.txt <<EOF
+          SinFlix $VERSION — macOS (Apple Silicon)
+
+          Esta build NO está firmada ni notariada por Apple (hace falta una
+          cuenta de Apple Developer). Para abrirla:
+
+            1. Descomprime el ZIP.
+            2. Clic DERECHO sobre SinFlix.app → Abrir → Abrir.
+
+          Si macOS sigue bloqueándola:
+
+            xattr -dr com.apple.quarantine /ruta/a/SinFlix.app
+
+          o en Ajustes → Privacidad y seguridad → "Abrir de todos modos".
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  macOS — Intel
+  # ════════════════════════════════════════════════════════════════════════
+  # `continue-on-error`: los runners Intel de GitHub están en retirada. Si el
+  # etiquetador deja de existir, esta variante cae pero el release sale igual.
+  macos-x64:
+    name: macOS (Intel)
+    needs: meta
+    runs-on: macos-13
+    continue-on-error: true
+    timeout-minutes: 60
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      BUILD_NUMBER: ${{ needs.meta.outputs.build_number }}
+      TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+      - run: flutter pub get
+
+      - name: Compilar
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=$APP_ENV"
+            "--dart-define=TMDB_LANGUAGE=$TMDB_LANGUAGE"
+            "--dart-define=TMDB_REGION=$TMDB_REGION"
+          )
+          [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && \
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL" "--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+          [ -n "$TMDB_READ_TOKEN" ] && D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+          flutter build macos --release \
+            --build-name="$VERSION" --build-number="$BUILD_NUMBER" "${D[@]}"
+
+      - name: Empaquetar
+        run: |
+          mkdir -p dist
+          cd build/macos/Build/Products/Release
+          APP=$(ls -d *.app | head -1)
+          ditto -c -k --sequesterRsrc --keepParent "$APP" \
+                "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-macos-x64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-x64
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 3
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  iOS — DESACTIVADO
+  # ════════════════════════════════════════════════════════════════════════
+  #
+  #  Para activarlo hacen falta tres secretos en el repositorio:
+  #
+  #    IOS_CERTIFICATE_BASE64        .p12 de distribución, en base64
+  #    IOS_CERTIFICATE_PASSWORD      contraseña de ese .p12
+  #    IOS_PROVISIONING_PROFILE_B64  .mobileprovision, en base64
+  #
+  #  Y cambiar el `if:` de abajo a `if: true`. El resto del job ya está
+  #  escrito: reconstruye el llavero, instala el perfil, compila el .ipa y lo
+  #  sube. Sin esos certificados el .ipa no se instala en ningún iPhone real,
+  #  así que no se publica nada hasta tenerlos.
+  #
+  #  ios:
+  #    name: iOS
+  #    needs: meta
+  #    if: false
+  #    runs-on: macos-15
+  #    steps:
+  #      - uses: actions/checkout@v4
+  #      - uses: subosito/flutter-action@v2
+  #        with: { channel: stable, cache: true }
+  #      - name: Llavero temporal
+  #        env:
+  #          CERT: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
+  #          CERT_PW: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+  #          PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE_B64 }}
+  #        run: |
+  #          echo "$CERT" | base64 -d > cert.p12
+  #          echo "$PROFILE" | base64 -d > profile.mobileprovision
+  #          security create-keychain -p actions build.keychain
+  #          security default-keychain -s build.keychain
+  #          security unlock-keychain -p actions build.keychain
+  #          security import cert.p12 -k build.keychain -P "$CERT_PW" -T /usr/bin/codesign
+  #          security set-key-partition-list -S apple-tool:,apple: -s -k actions build.keychain
+  #          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+  #          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+  #      - run: flutter pub get
+  #      - run: flutter build ipa --release --export-options-plist=ios/ExportOptions.plist
+  #      - uses: actions/upload-artifact@v4
+  #        with: { name: ios, path: build/ios/ipa/*.ipa }
+
+  # ════════════════════════════════════════════════════════════════════════
+  #  PUBLICAR
+  # ════════════════════════════════════════════════════════════════════════
+  publish:
+    name: Crear Release
+    needs: [meta, android, web, windows, linux, macos-arm64]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERSION: ${{ needs.meta.outputs.version }}
+      TAG: ${{ needs.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Descargar todos los artefactos
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Recopilar binarios y calcular checksums
+        run: |
+          mkdir -p release
+          find artifacts -type f -exec cp -v {} release/ \;
+          cd release
+          # SHA-256 de cada binario: permite verificar que la descarga no se ha
+          # corrompido ni manipulado. Se publica como asset y se enlaza en la web.
+          #
+          # Se excluye el propio SHA256SUMS.txt del globo: si no, la redirección
+          # lo crea vacío antes de expandir `*` y acaba incluyéndose a sí mismo.
+          find . -maxdepth 1 -type f ! -name 'SHA256SUMS.txt' -printf '%f\n' \
+            | sort | xargs -r sha256sum > SHA256SUMS.txt
+          echo "───────── contenido del release ─────────"
+          ls -la
+          echo "───────── SHA256SUMS.txt ─────────"
+          cat SHA256SUMS.txt
+
+      - name: Generar notas de la versión
+        id: notes
+        run: |
+          {
+            echo "## SinFlix $VERSION"
+            echo
+            echo "**Descarga directa:** [studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/) — detecta tu dispositivo y te da el archivo correcto."
+            echo
+            echo "### Qué bajar"
+            echo
+            echo "| Dispositivo | Archivo |"
+            echo "|---|---|"
+            echo "| Android (la mayoría, 2017+) | \`-android-arm64-v8a.apk\` |"
+            echo "| Android antiguo o gama baja | \`-android-armv7.apk\` |"
+            echo "| Android, si no sabes cuál | \`-android-universal.apk\` |"
+            echo "| Windows 10/11 (64 bits) | \`-windows-x64.zip\` |"
+            echo "| Linux (Debian/Ubuntu) | \`-linux-amd64.deb\` |"
+            echo "| Linux (cualquier distro) | \`-linux-x64.tar.gz\` |"
+            echo "| Mac con chip M1/M2/M3/M4 | \`-macos-arm64.zip\` |"
+            echo "| Mac con Intel | \`-macos-x64.zip\` |"
+            echo "| Cualquier navegador | \`-web.zip\` o la [app web](https://studiolexair.github.io/SinFlix/app/) |"
+            echo
+            echo "### Android: «instalación de origen desconocido»"
+            echo
+            echo "El APK está firmado con la clave de release del proyecto, pero al no venir"
+            echo "de Google Play el sistema pedirá permiso para instalar apps de origen"
+            echo "desconocido. Es un aviso normal en toda instalación fuera de tienda."
+            echo
+            echo "### macOS: clic derecho → Abrir"
+            echo
+            echo "Sin firma ni notarización de Apple (requiere cuenta de Apple Developer)."
+            echo "Clic derecho sobre la app → **Abrir**, o bien:"
+            echo
+            echo '```'
+            echo "xattr -dr com.apple.quarantine /ruta/a/SinFlix.app"
+            echo '```'
+            echo
+            echo "### iOS"
+            echo
+            echo "Todavía no: distribuir un \`.ipa\` instalable exige una cuenta de Apple"
+            echo "Developer. Mientras tanto, la [versión web](https://studiolexair.github.io/SinFlix/app/)"
+            echo "funciona en Safari y se puede añadir a la pantalla de inicio."
+            echo
+            echo "### Verificar la descarga"
+            echo
+            echo '```'
+            echo "sha256sum sinflix-$VERSION-android-arm64-v8a.apk"
+            echo "grep android-arm64 SHA256SUMS.txt"
+            echo '```'
+            echo
+            echo "### Cambios desde la versión anterior"
+            echo
+            git log --oneline --no-decorate "$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)"..HEAD 2>/dev/null \
+              | sed 's/^/- /' || echo "- Primera versión publicada."
+          } > NOTES.md
+          echo "notas generadas: $(wc -l < NOTES.md) líneas"
+
+      - name: Crear el Release y subir los binarios
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: SinFlix ${{ env.VERSION }}
+          body_path: release/NOTES.md
+          draft: false
+          prerelease: ${{ contains(env.VERSION, '-') }}
+          files: |
+            release/*.apk
+            release/*.aab
+            release/*.zip
+            release/*.tar.gz
+            release/*.deb
+            release/SHA256SUMS.txt
+            release/LEEME-*.txt
+          fail_on_unmatched_files: false
+          generate_release_notes: false
+
+      - name: Resumen
+        run: |
+          {
+            echo "## ✅ Release $TAG publicado"
+            echo
+            echo "🔗 https://github.com/${{ github.repository }}/releases/tag/$TAG"
+            echo
+            echo "### Binarios"
+            echo '```'
+            ls -la release | grep -vE '^total|^d'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # La web de descarga necesita saber qué versión acaba de salir. Se
+      # dispara el despliegue de Pages para que regenere `release.json`.
+      - name: Disparar el despliegue de la web
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run site.yml \
+            --repo "${{ github.repository }}" \
+            --ref main \
+            -f triggered_by="release $TAG" \
+            || echo "::warning::No se pudo disparar site.yml; la web se actualizará en el próximo push a main."

@@ -1,0 +1,83 @@
+name: Reportar un fallo
+description: Algo no funciona, se ve mal o se cierra. Para vulnerabilidades de seguridad, usa SECURITY.md en su lugar.
+title: "[fallo] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por reportar. Cuanto más concreto sea el "cómo reproducirlo",
+        antes se arregla. Si es una vulnerabilidad de seguridad, **no la
+        publiques aquí**: sigue [SECURITY.md](../blob/main/SECURITY.md).
+  - type: input
+    id: version
+    attributes:
+      label: Versión de SinFlix
+      description: La que aparece en la web de descarga o en el nombre del archivo.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: plataforma
+    attributes:
+      label: Plataforma
+      options:
+        - Android
+        - Windows
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux
+        - Web (navegador)
+    validations:
+      required: true
+  - type: input
+    id: detalles_plataforma
+    attributes:
+      label: Detalles de la plataforma
+      description: Versión del sistema, navegador, arquitectura…
+      placeholder: "Android 14, Pixel 7 · o · Chrome 130 en Windows 11"
+    validations:
+      required: true
+  - type: textarea
+    id: pasos
+    attributes:
+      label: Pasos para reproducir
+      description: Enumera lo mínimo que hay que hacer para verlo.
+      placeholder: |
+        1. Abrir la app sin sesión
+        2. Ir a Series → En emisión
+        3. Bajar hasta la tercera página
+      value: |
+        1.
+    validations:
+      required: true
+  - type: textarea
+    id: esperado
+    attributes:
+      label: Qué esperabas
+    validations:
+      required: true
+  - type: textarea
+    id: real
+    attributes:
+      label: Qué pasa en realidad
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Capturas, logs o cualquier cosa que ayude
+      description: |
+        Para la web, el log de la consola (F12 → Console). Para escritorio, el
+        texto del error completo.
+    validations:
+      required: false
+  - type: checkboxes
+    id: comprobaciones
+    attributes:
+      label: Antes de enviar
+      options:
+        - label: He buscado si ya existe un issue igual
+          required: true
+        - label: No incluyo tokens, claves ni capturas del dashboard de Supabase
+          required: true

@@ -1,0 +1,110 @@
+# ══════════════════════════════════════════════════════════════════════════
+#  SinFlix · Integración continua
+# ══════════════════════════════════════════════════════════════════════════
+#
+#  Se ejecuta en cada push a `main` y en cada pull request. Tres puertas, en
+#  este orden porque son de más barata a más cara:
+#
+#    1. format   → `dart format --set-exit-if-changed`  (~20 s)
+#    2. analyze  → `flutter analyze`, cero warnings      (~40 s)
+#    3. test     → los 131 tests                         (~3 min)
+#
+#  No publica nada: su único trabajo es decir "esto no se puede romper".
+#  Los binarios los construye `release.yml` al crear un tag.
+# ══════════════════════════════════════════════════════════════════════════
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Un push nuevo cancela la ejecución anterior de la misma rama: si vas a
+# corregir algo inmediatamente, no tiene sentido terminar el build viejo.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_CHANNEL: stable
+
+jobs:
+  quality:
+    name: Formato · Análisis · Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Versiones en uso
+        run: |
+          flutter --version
+          echo "──────────────────────────────"
+          dart --version
+
+      - name: Resolver dependencias
+        run: flutter pub get
+
+      - name: Verificar que pubspec.lock está sincronizado
+        run: |
+          cp pubspec.lock pubspec.lock.orig
+          flutter pub get
+          if ! diff -q pubspec.lock pubspec.lock.orig > /dev/null; then
+            echo "::error::pubspec.lock ha cambiado tras 'flutter pub get'."
+            echo "Alguien modificó pubspec.yaml sin commitear el lock resuelto."
+            diff -u pubspec.lock.orig pubspec.lock | head -40
+            exit 1
+          fi
+          echo "✓ pubspec.lock coherente con pubspec.yaml"
+
+      # ── Puerta 1: formato ───────────────────────────────────────────────
+      - name: Comprobar formato
+        run: dart format --output=none --set-exit-if-changed lib test
+
+      # ── Puerta 2: análisis estático ─────────────────────────────────────
+      - name: Analizar
+        run: flutter analyze --fatal-infos --fatal-warnings
+
+      # ── Puerta 3: tests ─────────────────────────────────────────────────
+      # `app_smoke_test.dart` bombea la app completa y pide ~2 GB de RAM. El
+      # runner de GitHub tiene 16 GB, así que se ejecuta todo junto.
+      - name: Ejecutar tests
+        run: flutter test --reporter expanded --coverage
+
+      - name: Resumen de cobertura
+        if: always()
+        run: |
+          if [ -f coverage/lcov.info ]; then
+            TOTAL=$(grep -c '^SF:' coverage/lcov.info || echo 0)
+            echo "Archivos instrumentados: $TOTAL"
+            echo "### Cobertura" >> "$GITHUB_STEP_SUMMARY"
+            echo "\`lcov.info\` generado con **$TOTAL** archivos instrumentados." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Verificar que el proyecto web compila
+        # Barato y coge el error más tonto y más frecuente: un `import` roto
+        # que solo falla al compilar para web (dart2js es más estricto que la VM).
+        run: flutter build web --release --no-tree-shake-icons
+
+      - name: Subir informe de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+          if-no-files-found: ignore
+          retention-days: 7

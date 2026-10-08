@@ -1,0 +1,11 @@
+# SinFlix — página de descargas
+# https://studiolexair.github.io/SinFlix/
+
+User-agent: *
+Allow: /
+
+# La app web es una SPA: nada que indexar ahí dentro, y sus rutas profundas
+# devuelven 404 con cuerpo válido (truco del 404.html). Mejor no rastrearlas.
+Disallow: /app/
+
+Sitemap: https://studiolexair.github.io/SinFlix/sitemap.xml

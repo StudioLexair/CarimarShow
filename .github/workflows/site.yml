@@ -1,0 +1,202 @@
+# ══════════════════════════════════════════════════════════════════════════
+#  SinFlix · Web de descarga + app web  →  GitHub Pages
+# ══════════════════════════════════════════════════════════════════════════
+#
+#  Publica DOS cosas en el mismo sitio:
+#
+#    https://studiolexair.github.io/SinFlix/        ← landing de descarga
+#    https://studiolexair.github.io/SinFlix/app/    ← la app Flutter compilada
+#
+#  Por qué un solo workflow para las dos: la landing necesita enlazar la app
+#  web, y la app web necesita el `--base-href` correcto para vivir en /app/.
+#  Separarlos sería duplicar la lógica del base-href y acabar desincronizados.
+#
+#  Lo importante de este archivo es `release.json`: se genera AQUÍ, en el
+#  runner, con el token de GitHub (5.000 peticiones/hora). La página web luego
+#  lee un archivo estático y no llama a la API desde el navegador. Si lo
+#  hiciera al revés, todos los visitantes compartirían el límite anónimo de
+#  60 peticiones/hora por IP y la web se rompería en cuanto tuviera tráfico.
+#
+#  Se dispara:
+#    · en cada push a main que toque la web o la app
+#    · a mano (pestaña Actions)
+#    · desde release.yml, nada más publicar una versión
+# ══════════════════════════════════════════════════════════════════════════
+
+name: Web
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'lib/**'
+      - 'web/**'
+      - 'pubspec.yaml'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+    inputs:
+      triggered_by:
+        description: 'Motivo (informativo)'
+        required: false
+        default: 'manual'
+  workflow_call:
+    inputs:
+      triggered_by:
+        type: string
+        required: false
+        default: 'llamada'
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write        # publicar en GitHub Pages
+  id-token: write     # OIDC: despliegue sin token de larga duración
+
+env:
+  SITE_URL: https://studiolexair.github.io/SinFlix/
+  APP_BASE_HREF: /SinFlix/app/
+
+jobs:
+  build:
+    name: Construir landing + app web
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # hace falta el historial para las notas de versión
+
+      - uses: actions/configure-pages@v5
+
+      # ── 1. La app Flutter, compilada para vivir bajo /SinFlix/app/ ───────
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Compilar la app web
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL_PROD }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY_PROD }}
+          TMDB_READ_TOKEN: ${{ secrets.TMDB_READ_TOKEN }}
+        run: |
+          D=(
+            "--dart-define=APP_ENV=production"
+            "--dart-define=TMDB_LANGUAGE=es-ES"
+            "--dart-define=TMDB_REGION=ES"
+          )
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            D+=("--dart-define=SUPABASE_URL=$SUPABASE_URL")
+            D+=("--dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY")
+            echo "✓ app web con cuentas en la nube"
+          else
+            echo "::warning::Sin variables de Supabase: la app web usará sesión local."
+          fi
+          if [ -n "$TMDB_READ_TOKEN" ]; then
+            D+=("--dart-define=TMDB_READ_TOKEN=$TMDB_READ_TOKEN")
+            echo "✓ app web con catálogo real de TMDB"
+          else
+            echo "::warning::Sin secreto TMDB_READ_TOKEN: la app web irá en MODO DEMO."
+            echo "::warning::Añádelo en Settings → Secrets and variables → Actions."
+          fi
+
+          flutter build web --release --base-href "$APP_BASE_HREF" "${D[@]}"
+
+      # ── 2. Montar el sitio ──────────────────────────────────────────────
+      - name: Ensamblar el sitio
+        run: |
+          rm -rf _site && mkdir -p _site
+          cp -r site/. _site/
+          mkdir -p _site/app
+          cp -r build/web/. _site/app/
+
+          # GitHub Pages no reescribe URLs. Copiando index.html a 404.html,
+          # una ruta profunda como /app/title/movie/155 recargada con F5 sirve
+          # la app (con estado 404, pero arranca y el router resuelve la ruta).
+          cp _site/app/index.html _site/app/404.html
+
+          echo "───────── sitio ─────────"
+          find _site -maxdepth 2 -type f | sort | head -30
+          echo "peso total: $(du -sh _site | cut -f1)"
+
+      # ── 3. release.json: qué se puede descargar ahora mismo ─────────────
+      - name: Generar release.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -o pipefail
+          RAW=$(gh api "repos/${{ github.repository }}/releases/latest" 2>/dev/null || true)
+
+          if [ -z "$RAW" ]; then
+            echo "::warning::Todavía no hay ningún Release publicado."
+            cat > _site/release.json <<'JSON'
+          {
+            "available": false,
+            "reason": "Aún no se ha publicado ninguna versión. En cuanto exista un tag v*, aparecerán aquí las descargas.",
+            "releases_url": "https://github.com/StudioLexair/SinFlix/releases"
+          }
+          JSON
+          else
+            # Se reduce el payload de la API (varios KB por asset, con URLs de
+            # HTML que no usamos) a exactamente lo que necesita la página.
+            echo "$RAW" | jq '{
+              available: true,
+              tag: .tag_name,
+              name: .name,
+              version: (.tag_name | sub("^v"; "")),
+              published_at: .published_at,
+              html_url: .html_url,
+              body: .body,
+              assets: [ .assets[] | {
+                name: .name,
+                url: .browser_download_url,
+                size: .size,
+                downloads: .download_count,
+                created_at: .created_at
+              } ]
+            }' > _site/release.json
+
+            echo "✓ release.json: $(jq -r '.version' _site/release.json) con $(jq '.assets | length' _site/release.json) binarios"
+            jq -r '.assets[].name' _site/release.json | sed 's/^/    · /'
+          fi
+
+      - name: Comprobar que la landing enlaza algo coherente
+        run: |
+          # Red mínima de seguridad: si el HTML pierde el contenedor de
+          # descargas, la página se vería vacía y nadie se enteraría.
+          for id in download-grid primary-download version-label; do
+            grep -q "id=\"$id\"" _site/index.html \
+              || { echo "::error::Falta id=\"$id\" en index.html"; exit 1; }
+          done
+          echo "✓ landing correcta"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Publicar en GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Resumen
+        run: |
+          {
+            echo "## 🌐 Web publicada"
+            echo
+            echo "- **Descargas:** ${{ env.SITE_URL }}"
+            echo "- **App web:**   ${{ env.SITE_URL }}app/"
+          } >> "$GITHUB_STEP_SUMMARY"

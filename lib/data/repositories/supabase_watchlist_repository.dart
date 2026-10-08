@@ -73,6 +73,20 @@ class SupabaseWatchlistRepository implements WatchlistRepository {
     return true;
   }
 
+  /// Inserta (o refresca) un título en la lista del usuario.
+  ///
+  /// **No se envían `overview` ni `original_language`**: la migración
+  /// `0002_scale_optimizations.sql` los eliminó de la tabla. La sinopsis era el
+  /// campo más caro de la fila (~250 bytes) y nunca se pinta en la lista —solo
+  /// en la ficha, que ya la pide a TMDB con `append_to_response`. Guardarla aquí
+  /// era coste puro: quitándola caben ~2,3× más usuarios en los 500 MB del plan
+  /// gratuito de Supabase.
+  ///
+  /// Lo que sí se guarda es justo lo necesario para pintar la lista **sin una
+  /// sola llamada a red**: título, póster, fondo, nota, votos, fecha y géneros.
+  ///
+  /// [_decodeRow] sigue leyendo esas dos columnas de forma tolerante, así que
+  /// este repositorio funciona igual contra un esquema con 0001 solamente.
   @override
   Future<void> add(String userId, MediaItem media) async {
     final DateTime now = DateTime.now().toUtc();
@@ -80,20 +94,28 @@ class SupabaseWatchlistRepository implements WatchlistRepository {
       'user_id': userId,
       'media_type': media.type.apiValue,
       'tmdb_id': media.id,
-      'title': media.displayTitle,
-      'poster_path': media.posterPath,
-      'backdrop_path': media.backdropPath,
-      'overview': media.overview,
+      'title': _clip(media.displayTitle, 400),
+      'poster_path': _clip(media.posterPath, 120),
+      'backdrop_path': _clip(media.backdropPath, 120),
       'vote_average': media.voteAverage,
       'vote_count': media.voteCount,
       'release_date': media.releaseDate?.toIso8601String(),
       'genre_ids': media.genreIds,
-      'original_language': media.originalLanguage,
       'status': WatchlistStatus.planned.name,
       'progress_percent': 0,
       'added_at': now.toIso8601String(),
       'updated_at': now.toIso8601String(),
     });
+  }
+
+  /// Recorta al límite declarado en la base de datos.
+  ///
+  /// Las columnas pasaron de `text` a `varchar(n)` en 0002 para que un cliente
+  /// malicioso no pueda hinchar la tabla. TMDB nunca supera estos tamaños, así
+  /// que en la práctica es un seguro que no corta nada.
+  static String? _clip(String? value, int max) {
+    if (value == null) return null;
+    return value.length <= max ? value : value.substring(0, max);
   }
 
   @override

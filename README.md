@@ -12,6 +12,21 @@ Un mismo código para **iOS · Android · Web · Windows · macOS · Linux**.
 [![TMDB](https://img.shields.io/badge/datos-TMDB-01B4E4?logo=themoviedatabase&logoColor=white)](https://www.themoviedb.org)
 [![tests](https://img.shields.io/badge/tests-131%20en%20verde-2ED573)](#tests)
 [![plataformas](https://img.shields.io/badge/plataformas-6-FFC53D)](#plataformas)
+[![licencia](https://img.shields.io/badge/licencia-MIT-9E9E9E)](LICENSE)
+
+[![ci](https://github.com/StudioLexair/SinFlix/actions/workflows/ci.yml/badge.svg)](https://github.com/StudioLexair/SinFlix/actions/workflows/ci.yml)
+[![release](https://github.com/StudioLexair/SinFlix/actions/workflows/release.yml/badge.svg)](https://github.com/StudioLexair/SinFlix/releases)
+[![web](https://github.com/StudioLexair/SinFlix/actions/workflows/site.yml/badge.svg)](https://studiolexair.github.io/SinFlix/)
+
+</div>
+
+<div align="center">
+
+### ⬇️ ¿Solo quieres usarla?
+
+**[studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/)**
+detecta tu dispositivo y te da el instalador correcto: Android, Windows,
+macOS, Linux o directamente el navegador.
 
 </div>
 
@@ -23,7 +38,7 @@ SinFlix incluye un **catálogo de demostración** con títulos ficticios, así q
 nada más clonarlo: ni token, ni backend, ni conexión a internet.
 
 ```bash
-git clone <tu-repo> sinflix && cd sinflix
+git clone https://github.com/StudioLexair/SinFlix.git && cd SinFlix
 flutter pub get
 flutter run            # o: flutter run -d chrome / -d linux / -d windows
 ```
@@ -136,6 +151,30 @@ Eso permite dos cosas que en este proyecto no son teóricas:
 
 ---
 
+## Automatización (CI/CD)
+
+Nada se compila a mano:
+
+| Al pasar esto… | …ocurre esto |
+|---|---|
+| push a `main` o un PR | formato → análisis estricto → 131 tests → build web de humo |
+| un tag `v*.*.*` | se compilan Android, Web, Windows, Linux y macOS (Intel y Apple Silicon), se publica el **Release** con binarios y checksums SHA-256, y se actualiza la web de descarga |
+| cambios en la web o la app | se redepliega **[studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/)** |
+
+El detalle (convención de nombres de artefactos, firmado de Android, por qué
+`release.json` se genera en el runner y no en el navegador) está en
+**[docs/CI-CD.md](docs/CI-CD.md)**.
+
+### Escala
+
+El diseño del esquema está pensado para sostener **~50.000 usuarios activos
+sobre el plan gratuito de Supabase**: filas más delgadas, sin índices muertos,
+RLS evaluado una vez por consulta, tope anti-abuso y autovacuum agresivo. Los
+números y el punto exacto en que conviene pasar a Pro, en
+**[docs/SCALING.md](docs/SCALING.md)**.
+
+---
+
 ## Configuración
 
 Todas las variables se inyectan con `--dart-define` (quedan embebidas en el binario;
@@ -189,19 +228,26 @@ flutter test
 ## Estructura del repositorio
 
 ```
-sinflix/
 ├── lib/                       Código de la aplicación (66 archivos)
 ├── test/                      131 tests
 ├── assets/data/               Catálogo de demo (títulos ficticios)
-├── supabase/migrations/       Esquema, índices, triggers, RLS y Realtime
+├── supabase/migrations/       Esquema, índices, triggers, RLS, Realtime y optimizaciones de escala
 ├── scripts/
 │   ├── run.sh                 Arranca inyectando .env como --dart-define
 │   └── create_repo.sh         Crea el repo y sube el primer commit
+├── site/                      Web de descarga (GitHub Pages, autocontenida)
+├── .github/
+│   ├── workflows/             ci.yml · release.yml · site.yml
+│   ├── ISSUE_TEMPLATE/        Plantillas de fallo y mejora
+│   └── PULL_REQUEST_TEMPLATE.md
 ├── docs/
 │   ├── SETUP.md               Guía de configuración completa
-│   └── ARCHITECTURE.md        Decisiones de arquitectura
+│   ├── ARCHITECTURE.md        Decisiones de arquitectura
+│   ├── CI-CD.md               Qué se compila solo, cuándo y cómo
+│   └── SCALING.md             Hasta dónde llega el free tier, con números
 ├── android/ ios/ web/         Proyectos de plataforma generados
 ├── linux/ macos/ windows/
+├── CHANGELOG.md · CONTRIBUTING.md · SECURITY.md
 ├── .env.example               Plantilla de configuración
 └── pubspec.yaml
 ```

@@ -68,3 +68,11 @@ macos/Flutter/ephemeral/
 supabase/.branches/
 supabase/.temp/
 supabase/.env
+
+# ── Material de firmado (NUNCA subir) ──────────────────────────────────
+sinflix-signing/
+.signing/
+*.keystore.tmp
+
+# ── Salida del build de la web ───────────────────────────────────────────
+_site/
