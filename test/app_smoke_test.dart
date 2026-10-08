@@ -59,19 +59,27 @@ void main() {
   /// Antes este test usaba duraciones fijas (`pump(100ms)`, `pump(400ms)`).
   /// Eso lo hacía frágil entre versiones de Flutter: la redirección del
   /// router puede resolverse un frame más tarde de una versión a otra y el
-  /// test fallaba sin que hubiera ningún bug real. Esperar activamente al
-  /// finder elimina esa dependencia del timing sin perder determinismo: el
-  /// reloj aquí es ficticio y avanza solo lo que nosotros decidimos.
+  /// test fallaba sin que hubiera ningún bug real.
+  ///
+  /// Cada intento combina dos relojes a propósito:
+  ///   · `runAsync` deja pasar async REAL: el primer evento de un stream
+  ///     `async*` (la sesión restaurada) se entrega fuera del reloj ficticio
+  ///     de `testWidgets`, y sin esto el splash no se va nunca.
+  ///   · `pump` avanza el reloj ficticio para que el router y los builders
+  ///     reconstruyan con el estado nuevo.
   ///
   /// No se usa `pumpAndSettle` porque la portada tiene animaciones continuas
   /// (avance automático del héroe) y no asentaría nunca.
   Future<void> settleUntil(
     WidgetTester tester,
     Finder finder, {
-    int intentos = 80,
+    int intentos = 40,
   }) async {
     for (int i = 0; i < intentos; i++) {
       if (finder.evaluate().isNotEmpty) return;
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 30)),
+      );
       await tester.pump(const Duration(milliseconds: 100));
     }
   }
