@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carimarshow/app.dart';
 import 'package:carimarshow/data/repositories/local_auth_repository.dart';
 import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
+import 'package:carimarshow/presentation/providers/auth_providers.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
 import 'package:carimarshow/presentation/screens/auth/login_screen.dart';
 import 'package:carimarshow/presentation/screens/splash_screen.dart';
@@ -115,6 +116,15 @@ void main() {
       );
       // ignore: avoid_print
       print('DIAG textos=${visibles.take(25).join(' | ')}');
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(SplashScreen)),
+      );
+      // ignore: avoid_print
+      print(
+        'DIAG auth=${container.read(authStateProvider)} '
+        'resolviendo=${container.read(isResolvingSessionProvider)} '
+        'repo=${container.read(authRepositoryProvider).runtimeType}',
+      );
     }
     // ── fin diagnóstico ────────────────────────────────────────────────
 
