@@ -9,7 +9,6 @@ import 'package:carimarshow/domain/entities/media_item.dart';
 import 'package:carimarshow/domain/entities/media_type.dart';
 import 'package:carimarshow/domain/repositories/media_repository.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
-import 'package:carimarshow/presentation/providers/media_providers.dart';
 
 /// Prueba de humo de extremo a extremo.
 ///
