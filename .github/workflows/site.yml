@@ -133,7 +133,15 @@ jobs:
           set -o pipefail
           RAW=$(gh api "repos/${{ github.repository }}/releases/latest" 2>/dev/null || true)
 
-          if [ -z "$RAW" ]; then
+          # ¿De verdad hay un release? No basta con que la llamada devuelva
+          # algo: sin releases, la API responde 404 con un cuerpo JSON de error
+          # que igualmente es "algo". Se valida el formato antes de usarlo,
+          # porque si no, jq revienta contra un tag_name null.
+          HAY_RELEASE=$(printf '%s' "$RAW" \
+            | jq -e 'type == "object" and (.tag_name | type == "string")' \
+            2>/dev/null || echo false)
+
+          if [ "$HAY_RELEASE" != "true" ]; then
             echo "::warning::Todavía no hay ningún Release publicado."
             cat > _site/release.json <<'JSON'
           {
