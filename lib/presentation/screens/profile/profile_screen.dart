@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
@@ -9,6 +10,7 @@ import '../../../core/utils/responsive.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/core_providers.dart';
+import '../../providers/settings_providers.dart';
 import '../../providers/watchlist_providers.dart';
 import '../../widgets/brand_app_bar.dart';
 
@@ -52,6 +54,56 @@ class ProfileScreen extends ConsumerWidget {
             value: adultContent,
             onChanged: (bool value) =>
                 ref.read(adultContentProvider.notifier).set(value),
+          ),
+          const SizedBox(height: 12),
+
+          const _SectionLabel('Portada'),
+          _SwitchTile(
+            icon: Icons.campaign_outlined,
+            title: 'Banner promocional',
+            subtitle: 'Muestra el aviso editable en la portada.',
+            value: ref.watch(promoSettingsProvider).enabled,
+            onChanged: (bool v) =>
+                ref.read(promoSettingsProvider.notifier).setEnabled(v),
+          ),
+          const SizedBox(height: 12),
+
+          const _SectionLabel('Almacenamiento'),
+          _InfoTile(
+            icon: Icons.sd_storage_outlined,
+            title: 'Caché del catálogo',
+            value: _fmtBytes(ref.watch(cacheSizeProvider)),
+            subtitle:
+                'Copias locales de lo consultado para navegar sin conexión.',
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () async {
+                final int freed =
+                    await ref.read(catalogCacheProvider).clear();
+                ref.invalidate(cacheSizeProvider);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Caché vaciada: ${_fmtBytes(freed)} liberados')),
+                );
+              },
+              icon: const Icon(Icons.cleaning_services_outlined, size: 18),
+              label: const Text('Liberar espacio'),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          const _SectionLabel('Negocio'),
+          Card(
+            color: AppColors.surface,
+            child: ListTile(
+              leading: const Icon(Icons.storefront_outlined, color: AppColors.accent),
+              title: const Text('Datos del negocio'),
+              subtitle: const Text('Dirección, horario y contacto de CarimarShow.'),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => context.push('/negocio'),
+            ),
           ),
           const SizedBox(height: 12),
 
@@ -682,4 +734,12 @@ class _AboutBox extends StatelessWidget {
       ),
     );
   }
+}
+
+
+/// Formatea bytes como KB/MB para la sección de almacenamiento.
+String _fmtBytes(int bytes) {
+  if (bytes <= 0) return '0 KB';
+  if (bytes < 1024 * 1024) return '${(bytes / 1024).round()} KB';
+  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }

@@ -12,9 +12,12 @@ import '../providers/auth_providers.dart';
 /// Se comparte entre las pestañas del shell para no repetir el mismo código en
 /// Inicio, Películas, Series y Mi lista.
 class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const BrandAppBar({this.showSearch = true, this.bottom, super.key});
+  const BrandAppBar({this.showSearch = true, this.bottom, this.actions, super.key});
 
   final bool showSearch;
+
+  /// Acciones extra de cada pantalla (p. ej. compartir la lista).
+  final List<Widget>? actions;
 
   /// Pestañas u otro widget que cuelga bajo la barra.
   final PreferredSizeWidget? bottom;
@@ -29,6 +32,7 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return AppBar(
       bottom: bottom,
+      actions: actions,
       titleSpacing: 16,
       title: const Row(
         mainAxisSize: MainAxisSize.min,

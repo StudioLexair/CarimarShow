@@ -8,6 +8,7 @@ import '../../domain/entities/media_id.dart';
 import '../../domain/entities/media_type.dart';
 import '../providers/auth_providers.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/business/business_info_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/detail/media_detail_screen.dart';
 import '../screens/home/home_screen.dart';
@@ -107,7 +108,13 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
             const RegisterScreen(),
       ),
       GoRoute(
-        path: '/search',
+        path: '/negocio',
+      name: 'negocio',
+      builder: (BuildContext context, GoRouterState state) =>
+          const BusinessInfoScreen(),
+    ),
+    GoRoute(
+      path: '/search',
         name: 'search',
         builder: (BuildContext context, GoRouterState state) =>
             const SearchScreen(),

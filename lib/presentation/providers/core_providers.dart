@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
+import '../../core/cache/catalog_cache.dart';
 import '../../core/config/app_config.dart';
 import '../../data/repositories/local_auth_repository.dart';
 import '../../data/repositories/local_watchlist_repository.dart';
@@ -73,12 +74,20 @@ final Provider<bool> demoModeProvider = Provider<bool>(
 // ══════════════════════════════════════════════════════════════════════════
 
 /// Catálogo: TMDB en directo si hay credenciales, demo local si no.
+/// Caché en disco de respuestas del catálogo (offline + botón «liberar espacio»).
+final Provider<CatalogCache> catalogCacheProvider = Provider<CatalogCache>(
+  (Ref ref) => CatalogCache(ref.watch(sharedPreferencesProvider)),
+);
+
 final Provider<MediaRepository> mediaRepositoryProvider =
     Provider<MediaRepository>((Ref ref) {
       final AppConfig config = ref.watch(appConfigProvider);
       final MediaRepository repository = config.useDemoCatalog
           ? DemoMediaSource()
-          : TmdbMediaSource(config: config);
+          : TmdbMediaSource(
+              config: config,
+              cache: ref.watch(catalogCacheProvider),
+            );
       ref.onDispose(repository.dispose);
       return repository;
     });

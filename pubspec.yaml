@@ -31,6 +31,11 @@ dependencies:
   shimmer: ^4.0.0
   url_launcher: ^6.3.3
 
+  # Share-sheet nativo por plataforma (lista de favoritos → WhatsApp).
+  # `any` deja que pub resuelva la última versión compatible con el SDK:
+  # el proyecto no usa nada específico de una versión concreta.
+  share_plus: any
+
   # ── Utilidades ─────────────────────────────────────────────────────────
   intl: ^0.20.3
   equatable: ^3.0.0
@@ -46,3 +51,4 @@ flutter:
   assets:
     # Catálogo de respaldo para que la app funcione SIN configurar nada.
     - assets/data/demo_catalog.json
+    - assets/brand/

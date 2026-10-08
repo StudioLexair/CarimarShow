@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
+import '../cache/catalog_cache.dart';
 import '../config/app_config.dart';
 import '../constants/app_strings.dart';
 import '../constants/tmdb_constants.dart';
@@ -15,7 +17,8 @@ import '../errors/app_exception.dart';
 ///  * Convertir cualquier fallo de transporte en un [AppException] tipado.
 ///  * Extraer de forma uniforme las listas de las respuestas paginadas.
 class TmdbApiClient {
-  TmdbApiClient({required this.config, Dio? dio}) : _dio = dio ?? Dio() {
+  TmdbApiClient({required this.config, Dio? dio, this.cache})
+      : _dio = dio ?? Dio() {
     _dio
       ..options.baseUrl = Tmdb.baseUrl
       ..options.connectTimeout = Tmdb.timeout
@@ -35,6 +38,10 @@ class TmdbApiClient {
   final AppConfig config;
   final Dio _dio;
 
+  /// Caché en disco de respuestas. Si es `null`, el cliente funciona exactamente
+  /// como antes: red pura sin copia local.
+  final CatalogCache? cache;
+
   /// Parámetros comunes. Si solo hay `api_key` (v3), se manda como query param.
   Map<String, dynamic> _baseQuery([Map<String, dynamic>? extra]) =>
       <String, dynamic>{
@@ -44,19 +51,31 @@ class TmdbApiClient {
       };
 
   /// Petición GET que devuelve el JSON descodificado.
+  ///
+  /// Con caché activa es *cache-first en el fallo*: se intenta siempre la red
+  /// (para tener lo más fresco posible) y, si la red no responde, se sirve la
+  /// última copia buena del disco. Es exactamente la regla que pidió el
+  /// cliente: «¿hay internet? busca y cachea; ¿no hay? busca local».
   Future<dynamic> getJson(
     String path, {
     Map<String, dynamic>? query,
     CancelToken? cancelToken,
   }) async {
+    final String? cacheKey = cache == null ? null : _cacheKey(path, query);
     try {
       final Response<dynamic> response = await _dio.get<dynamic>(
         path,
         queryParameters: _baseQuery(query),
         cancelToken: cancelToken,
       );
+      if (cacheKey != null) {
+        // Guardar no debe retrasar la respuesta que ya llegó bien.
+        unawaited(cache!.write(cacheKey, jsonEncode(response.data)));
+      }
       return response.data;
     } on DioException catch (error, stackTrace) {
+      final dynamic stale = await _stale(cacheKey, error);
+      if (stale != null) return stale;
       throw mapDioException(error, stackTrace);
     } on AppException {
       rethrow;
@@ -68,6 +87,44 @@ class TmdbApiClient {
         cause: error,
         stackTrace: stackTrace,
       );
+    }
+  }
+
+  /// Clave de caché: ruta + parámetros ordenados + idioma. El idioma entra en
+  /// la clave porque TMDB devuelve títulos y sinopsis traducidos: una copia en
+  /// es-ES no sirve para una sesión en en-US.
+  String _cacheKey(String path, Map<String, dynamic>? query) {
+    final List<MapEntry<String, dynamic>> params =
+        (query?.entries.toList() ?? <MapEntry<String, dynamic>>[])
+          ..sort((MapEntry<String, dynamic> a, MapEntry<String, dynamic> b) =>
+              a.key.compareTo(b.key));
+    return '${config.language}|$path|${params.map((MapEntry<String, dynamic> e) => '${e.key}=${e.value}').join('&')}';
+  }
+
+  /// Copia en disco cuando el fallo es de conectividad o del servidor.
+  ///
+  /// Un 404 o un 401 NO se sirven desde caché: son respuestas reales que la UI
+  /// debe traducir («no existe», «revisa tu token»). Solo se degrada ante
+  /// ausencia de red, timeouts, 429 o 5xx.
+  Future<dynamic> _stale(String? cacheKey, DioException error) async {
+    if (cacheKey == null) return null;
+    final int status = error.response?.statusCode ?? 0;
+    final bool offline = switch (error.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.connectionError ||
+      DioExceptionType.unknown => true,
+      DioExceptionType.badResponse => status == 429 || status >= 500,
+      _ => false,
+    };
+    if (!offline) return null;
+    final String? raw = await cache!.read(cacheKey);
+    if (raw == null) return null;
+    try {
+      return jsonDecode(raw);
+    } catch (_) {
+      return null;
     }
   }
 

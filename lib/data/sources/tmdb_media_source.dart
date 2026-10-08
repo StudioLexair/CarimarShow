@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../core/cache/catalog_cache.dart';
 import '../../core/config/app_config.dart';
 import '../../core/constants/tmdb_constants.dart';
 import '../../core/network/tmdb_api_client.dart';
@@ -19,8 +20,8 @@ import '../mappers/media_mapper.dart';
 ///    listado para traducir `genre_ids` a nombres.
 ///  * `adult` se filtra de forma centralizada para respetar la preferencia.
 class TmdbMediaSource implements MediaRepository {
-  TmdbMediaSource({required AppConfig config, Dio? dio})
-    : _client = TmdbApiClient(config: config, dio: dio),
+  TmdbMediaSource({required AppConfig config, Dio? dio, CatalogCache? cache})
+    : _client = TmdbApiClient(config: config, dio: dio, cache: cache),
       _cancelToken = CancelToken();
 
   final TmdbApiClient _client;

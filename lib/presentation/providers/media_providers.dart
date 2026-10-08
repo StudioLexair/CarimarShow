@@ -15,6 +15,21 @@ import 'core_providers.dart';
 //  Géneros
 // ══════════════════════════════════════════════════════════════════════════
 
+/// «Lo mejor de hoy»: tendencias de las últimas 24 h. El cliente lo pidió
+/// explícito en portada, separado de la semanal.
+final FutureProvider<List<MediaItem>> trendingTodayProvider =
+    FutureProvider<List<MediaItem>>(
+      (Ref ref) =>
+          ref.watch(mediaRepositoryProvider).getTrending(timeWindow: 'day'),
+    );
+
+/// «Lo mejor de la semana»: tendencias de los últimos 7 días.
+final FutureProvider<List<MediaItem>> trendingWeekProvider =
+    FutureProvider<List<MediaItem>>(
+      (Ref ref) =>
+          ref.watch(mediaRepositoryProvider).getTrending(timeWindow: 'week'),
+    );
+
 final FutureProvider<List<Genre>> movieGenresProvider =
     FutureProvider<List<Genre>>(
       (Ref ref) =>

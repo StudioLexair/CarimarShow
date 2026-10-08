@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/business_info.dart';
+import '../../../core/utils/share_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/responsive.dart';
@@ -47,6 +49,7 @@ class WatchlistScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: BrandAppBar(
+        actions: const <Widget>[_ShareListButton()],
         showSearch: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(108),
@@ -545,6 +548,83 @@ class _WatchlistSkeleton extends StatelessWidget {
           const SizedBox(height: 10),
       itemBuilder: (BuildContext context, int index) =>
           const ShimmerBox(height: 113, borderRadius: 14),
+    );
+  }
+}
+
+
+/// Botón de la barra que comparte la lista como texto plano.
+///
+/// Flujo que describió el cliente: el vendedor prepara la selección y se la
+/// manda al dueño por WhatsApp. Se abre un diálogo para escribir una nota
+/// final («pásate por el negocio antes de las 10») y el mensaje se compone
+/// con la lista, la nota y los datos del negocio al pie.
+class _ShareListButton extends ConsumerWidget {
+  const _ShareListButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<WatchlistItem> items =
+        ref.watch(watchlistProvider).value ?? const <WatchlistItem>[];
+    if (items.isEmpty) return const SizedBox.shrink();
+
+    return IconButton(
+      tooltip: 'Compartir lista',
+      icon: const Icon(Icons.share_outlined),
+      onPressed: () => _confirm(context, items),
+    );
+  }
+
+  Future<void> _confirm(BuildContext context, List<WatchlistItem> items) async {
+    final TextEditingController note = TextEditingController();
+    final String? texto = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Compartir tu lista'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('${items.length} títulos. Añade una nota si quieres:'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: note,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                hintText: 'Ej.: paso a recogerlo el jueves por la tarde',
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(note.text.trim()),
+            child: const Text('Compartir'),
+          ),
+        ],
+      ),
+    );
+    if (texto == null) return;
+
+    final StringBuffer sb = StringBuffer('🎬 Mi lista de CarimarShow\n');
+    for (final WatchlistItem i in items) {
+      sb.writeln('• ${i.media.displayTitle} (${i.status.label})');
+    }
+    if (texto.isNotEmpty) sb.writeln('\n$texto');
+    sb.writeln('\n${BusinessInfo.shareFooter}');
+
+    final bool compartido = await ShareService.share(sb.toString());
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(compartido
+            ? 'Lista compartida'
+            : 'Sin sheet nativo aquí: lista copiada al portapapeles'),
+      ),
     );
   }
 }
