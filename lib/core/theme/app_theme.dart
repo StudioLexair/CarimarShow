@@ -180,23 +180,20 @@ abstract final class AppTheme {
 
       // ── Componentes ───────────────────────────────────────────────────
       cardTheme: CardThemeData(
-        color: isDark ? AppColors.surfaceHigh : Colors.white,
+        color: pal.surfaceHigh,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(_radius),
+          side: BorderSide(color: pal.outline.withValues(alpha: 0.35)),
         ),
       ),
 
       chipTheme: ChipThemeData(
-        backgroundColor: isDark
-            ? AppColors.surfaceHigh
-            : const Color(0xFFEFEFF4),
-        selectedColor: AppColors.crimson,
-        side: BorderSide(
-          color: isDark ? AppColors.outline : const Color(0xFFDCDCE4),
-        ),
+        backgroundColor: pal.surfaceHigh,
+        selectedColor: AppColors.accentDeep,
+        side: BorderSide(color: pal.outline.withValues(alpha: 0.5)),
         labelStyle: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
@@ -244,19 +241,20 @@ abstract final class AppTheme {
               : const Color(0xFFDCDCE4),
           minimumSize: const Size.fromHeight(52),
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_radius),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
           ),
         ),
       ),
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: isDark ? AppColors.textPrimary : Colors.black87,
+          foregroundColor: pal.textPrimary,
           minimumSize: const Size.fromHeight(52),
-          side: BorderSide(
-            color: isDark ? AppColors.outline : const Color(0xFFDCDCE4),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(999),
           ),
+          side: BorderSide(color: pal.outline),
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_radius),
@@ -278,9 +276,7 @@ abstract final class AppTheme {
       ),
 
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: isDark
-            ? AppColors.surface.withValues(alpha: 0.94)
-            : Colors.white.withValues(alpha: 0.94),
+        backgroundColor: pal.surface.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
         indicatorColor: AppColors.crimson.withValues(alpha: 0.18),
         height: 66,
