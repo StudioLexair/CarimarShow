@@ -1,0 +1,70 @@
+# ── Secretos: NUNCA subir a git ──────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.keystore
+*.jks
+GoogleService-Info.plist
+google-services.json
+
+# ── Flutter / Dart ───────────────────────────────────────────────────────
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+# En una aplicación (no en una librería) el lockfile SÍ se versiona:
+# garantiza que todo el equipo y el CI resuelvan las mismas versiones.
+
+# Código generado
+*.g.dart
+*.freezed.dart
+lib/generated_plugin_registrant.dart
+
+# ── IDE ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.iml
+*.ipr
+*.iws
+
+# ── Sistemas operativos ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Android ──────────────────────────────────────────────────────────────
+android/.gradle/
+android/local.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+**/android/key.properties
+
+# ── iOS ──────────────────────────────────────────────────────────────────
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+
+# ── Web / escritorio ─────────────────────────────────────────────────────
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+macos/Flutter/ephemeral/
+**/ephemeral/
+
+# ── Supabase ─────────────────────────────────────────────────────────────
+supabase/.branches/
+supabase/.temp/
+supabase/.env
