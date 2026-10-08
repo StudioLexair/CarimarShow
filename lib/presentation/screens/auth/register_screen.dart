@@ -8,7 +8,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/auth_providers.dart';
-import '../../providers/core_providers.dart';
 import 'auth_widgets.dart';
 
 /// Alta de cuenta nueva.

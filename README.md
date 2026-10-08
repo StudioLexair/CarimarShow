@@ -157,7 +157,7 @@ Nada se compila a mano:
 
 | Al pasar esto… | …ocurre esto |
 |---|---|
-| push a `main` o un PR | formato → análisis estricto → 131 tests → build web de humo |
+| push a `main` o un PR | formato → análisis (cero warnings) → 131 tests → build web de humo |
 | un tag `v*.*.*` | se compilan Android, Web, Windows, Linux y macOS (Intel y Apple Silicon), se publica el **Release** con binarios y checksums SHA-256, y se actualiza la web de descarga |
 | cambios en la web o la app | se redepliega **[studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/)** |
 

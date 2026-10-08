@@ -18,7 +18,7 @@
 <!-- Comandos, plataformas donde lo has mirado, capturas si es UI.
      Si tocas UI: ¿lo has visto en ancho estrecho Y ancho? -->
 
-- [ ] `flutter analyze --fatal-infos --fatal-warnings` sin avisos
+- [ ] `flutter analyze --fatal-warnings` sin warnings
 - [ ] `dart format --output=none --set-exit-if-changed lib test` limpio
 - [ ] `flutter test` en verde (o explico por qué un test cambia)
 

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/media_id.dart';
 import '../../domain/entities/media_type.dart';
+import '../providers/auth_providers.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/detail/media_detail_screen.dart';
@@ -17,7 +18,6 @@ import '../screens/series/series_screen.dart';
 import '../screens/splash_screen.dart';
 import '../screens/watchlist/watchlist_screen.dart';
 import '../shell/main_shell.dart';
-import '../providers/auth_providers.dart';
 
 /// Rutas que no requieren sesión iniciada.
 const Set<String> _publicPaths = <String>{'/splash', '/login', '/register'};

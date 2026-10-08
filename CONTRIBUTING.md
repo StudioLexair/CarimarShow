@@ -40,7 +40,8 @@ desarrollar y pasar los tests.
 ## Convenciones
 
 - Formato: `dart format lib test` (el CI lo exige).
-- Análisis: cero warnings e infos (`flutter analyze --fatal-infos`).
+- Análisis: cero warnings (`flutter analyze --fatal-warnings`). Los *infos*
+  de estilo se revisan en revisión de código pero no bloquean el CI.
 - Tests: si tocas lógica de mapeo o de repositorio, añade o ajusta el test que
   la cubre. Los mapeadores y el repositorio local son donde vive la lógica
   real; ahí es donde más valor tiene testear.

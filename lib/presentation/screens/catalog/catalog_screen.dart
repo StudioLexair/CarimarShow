@@ -112,7 +112,7 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen>
               selected: _selectedGenres,
               sortBy: _sortBy,
               onToggleGenre: _toggleGenre,
-              onPickSort: () => _pickSort(),
+              onPickSort: _pickSort,
               onClear: _clearFilters,
             ),
             orElse: () => const SizedBox.shrink(),

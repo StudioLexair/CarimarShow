@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sinflix/data/mappers/local_codec.dart';
 import 'package:sinflix/data/repositories/local_watchlist_repository.dart';
 import 'package:sinflix/domain/entities/media_id.dart';
 import 'package:sinflix/domain/entities/media_item.dart';
 import 'package:sinflix/domain/entities/media_type.dart';
 import 'package:sinflix/domain/entities/watchlist_item.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 const MediaItem _movie = MediaItem(
   id: 155,

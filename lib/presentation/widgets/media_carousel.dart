@@ -67,7 +67,9 @@ class MediaCarousel extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              cacheExtent: itemWidth * 3,
+              // `cacheExtent` se deprecó tras la 3.41 en favor de
+              // `scrollCacheExtent`; mismo comportamiento, nombre nuevo.
+              scrollCacheExtent: itemWidth * 3,
               itemCount: items.length,
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(width: 12),
