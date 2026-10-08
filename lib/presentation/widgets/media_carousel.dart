@@ -67,9 +67,14 @@ class MediaCarousel extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              // `cacheExtent` se deprecó tras la 3.41 en favor de
-              // `scrollCacheExtent`; mismo comportamiento, nombre nuevo.
-              scrollCacheExtent: itemWidth * 3,
+              // `cacheExtent` está deprecado en favor de `scrollCacheExtent`,
+              // pero el tipo de repuesto `ScrollCacheExtent` NO se exporta
+              // públicamente (flutter/flutter#189347): no hay forma de
+              // construirlo desde código de aplicación. Se mantiene la
+              // propiedad deprecada —sigue funcionando— hasta que Flutter
+              // arregle la exportación. Es un info de analizador, no un warning.
+              // ignore: deprecated_member_use
+              cacheExtent: itemWidth * 3,
               itemCount: items.length,
               separatorBuilder: (BuildContext context, int index) =>
                   const SizedBox(width: 12),
