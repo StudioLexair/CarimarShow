@@ -64,6 +64,17 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       final bool signedIn = auth.value != null;
       final bool isPublic = _publicPaths.contains(location);
 
+      // 1b. El splash es solo una sala de espera: con la sesión ya resuelta
+      //     nadie se queda aquí. Sin esta regla, un arranque en frío sin
+      //     sesión puede quedarse clavado en /splash para siempre: como
+      //     '/splash' es ruta pública, la regla 2 no lo mueve, y si el evento
+      //     de sesión llegó justo antes de construir el router, el
+      //     `refreshListenable` no vuelve a disparar y nada reevalúa la
+      //     navegación. Era una carrera que dependía del orden de microtareas.
+      if (location == '/splash') {
+        return signedIn ? '/home' : '/login';
+      }
+
       // 2. Sin sesión y la ruta es privada → login.
       if (!signedIn && !isPublic) return '/login';
 

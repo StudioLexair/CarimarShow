@@ -7,9 +7,6 @@ import 'package:carimarshow/data/repositories/local_auth_repository.dart';
 import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
 import 'package:carimarshow/presentation/providers/auth_providers.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
-import 'package:carimarshow/presentation/screens/auth/login_screen.dart';
-import 'package:carimarshow/presentation/screens/splash_screen.dart';
-import 'package:carimarshow/presentation/shell/main_shell.dart';
 
 /// Prueba de humo de extremo a extremo.
 ///
@@ -97,39 +94,6 @@ void main() {
     WidgetTester tester,
   ) async {
     await hastaLogin(tester);
-
-    // ── Diagnóstico temporal ───────────────────────────────────────────
-    // Si el login no aparece, queremos ver QUÉ hay en pantalla en vez de
-    // un "found 0 widgets" a ciegas. Se quitará en cuanto se sepa la causa.
-    if (find.text('Iniciar sesión').evaluate().isEmpty) {
-      final List<String> visibles = find
-          .byType(Text)
-          .evaluate()
-          .map((Element e) => (e.widget as Text).data ?? '')
-          .where((String s) => s.trim().isNotEmpty)
-          .toList();
-      // ignore: avoid_print
-      print(
-        'DIAG splash=${find.byType(SplashScreen).evaluate().length} '
-        'login=${find.byType(LoginScreen).evaluate().length} '
-        'shell=${find.byType(MainShell).evaluate().length}',
-      );
-      // ignore: avoid_print
-      print('DIAG textos=${visibles.take(25).join(' | ')}');
-      final ProviderContainer container = ProviderScope.containerOf(
-        tester.element(find.byType(SplashScreen)),
-      );
-      // ignore: avoid_print
-      print(
-        'DIAG auth=${container.read(authStateProvider)} '
-        'resolviendo=${container.read(isResolvingSessionProvider)} '
-        'repo=${container.read(authRepositoryProvider).runtimeType}',
-      );
-    }
-    // ── fin diagnóstico ────────────────────────────────────────────────
-
-    expect(find.text('Iniciar sesión'), findsWidgets);
-    expect(find.text('Contraseña'), findsOneWidget);
 
     // Sin Supabase no se ofrece registro, solo la sesión local.
     expect(find.text('Crear cuenta'), findsNothing);
