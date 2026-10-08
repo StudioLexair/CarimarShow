@@ -15,9 +15,10 @@ import '../../providers/auth_providers.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/media_providers.dart';
 import '../../providers/watchlist_providers.dart';
+import '../../widgets/demo_mode_banner.dart';
+import '../../widgets/hero_backdrop.dart';
 import '../../widgets/media_carousel.dart';
 import '../../widgets/promo_banner.dart';
-import '../../widgets/hero_backdrop.dart';
 
 /// Portada: héroe rotatorio + carruseles por categoría.
 ///

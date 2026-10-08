@@ -37,7 +37,6 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return AppBar(
       bottom: bottom,
-      actions: actions,
       titleSpacing: 16,
       title: const Row(
         mainAxisSize: MainAxisSize.min,
@@ -55,6 +54,7 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ],
       ),
       actions: <Widget>[
+        ...?actions,
         if (showSearch)
           IconButton(
             tooltip: 'Buscar',
