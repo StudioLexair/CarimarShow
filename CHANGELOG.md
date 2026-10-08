@@ -5,6 +5,33 @@ Todos los cambios notables de CarimarShow se documentan aquí.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/) y
 este proyecto adhiere [SemVer](https://semver.org/lang/es/).
 
+## [1.0.0] — CarimarShow, fase 1
+
+Primera versión con la marca del cliente y la «etapa informativa» completa.
+
+### Añadido
+- **Caché de catálogo en disco** (cache-first en el fallo): si hay red se
+  consulta TMDB y se guarda copia; si no hay red, timeout, 429 o 5xx, se sirve
+  la última copia buena. Índice LRU con tope de 2 MB.
+- **Botón «Liberar espacio»** en Perfil: vacía la caché y dice cuántos bytes
+  liberó.
+- **Compartir la lista de favoritos**: diálogo con nota final, share-sheet
+  nativo (`share_plus`) con copia al portapapeles como reserva, y pie con los
+  datos del negocio.
+- **Banner promocional configurable** en portada (interruptor y texto editable
+  en Perfil; la × lo desactiva).
+- **Filas «Lo mejor de hoy» y «Lo mejor de la semana»** explícitas en portada.
+- **Pantalla «El negocio»** (`/negocio`) con dirección, horario, teléfonos
+  (`tel:`) y correo (`mailto:`), más el logotipo.
+- **Rebrand completo a CarimarShow**: repo, paquete Dart `carimarshow`,
+  bundle ids `com.carimarshow.app`, nombres visibles en las seis plataformas,
+  paleta turquesa/menta del logotipo, 37 iconos generados desde el logo real,
+  web y og-image recoloreadas.
+
+### Cambiado
+- El redirect del router ya no puede dejar al usuario clavado en `/splash`.
+- Proyectos Supabase renombrados a `carimarshow-production` / `-staging`.
+
 ## [Sin publicar]
 
 ### Añadido
