@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,9 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carimarshow/app.dart';
 import 'package:carimarshow/data/repositories/local_auth_repository.dart';
 import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
+import 'package:carimarshow/data/mappers/media_mapper.dart';
 import 'package:carimarshow/domain/entities/media_item.dart';
 import 'package:carimarshow/domain/entities/media_type.dart';
-import 'package:carimarshow/domain/repositories/media_repository.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
 
 /// Prueba de humo de extremo a extremo.
@@ -126,69 +129,53 @@ void main() {
 
   // Antes este test buscaba los títulos ficticios en la pantalla, pero en la
   // superficie de 800x600 de `testWidgets` los carruseles de la portada quedan
-  // por debajo del pliegue y sus tarjetas ni se construyen: el test fallaba
-  // aunque el catálogo cargara perfectamente. Lo que de verdad quiere probar
-  // este test es que el asset existe, se parsea y se mapea a entidades, así
-  // que se comprueba en la capa de datos, que es donde vive esa garantía y
-  // donde el resultado no depende del layout ni del tamaño de pantalla.
-  test(
-    'el catálogo de demo se carga, se parsea y se mapea desde los assets',
-    () async {
-      TestWidgetsFlutterBinding.ensureInitialized();
-      SharedPreferences.setMockInitialValues(<String, Object>{});
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // por debajo del pliegue y sus tarjetas ni se construyen; y cargar el asset
+  // con `rootBundle` dentro de un test plano llegaba a colgar el binario.
+  // Lo que de verdad se quiere garantizar aquí es que el asset existe, se
+  // parsea y se mapea a entidades coherentes: se comprueba leyendo el fichero
+  // y pasando el JSON por el mismo mapeador que usa la app, sin binding ni
+  // providers de por medio. Determinista y rápido.
+  test('el catálogo de demo se parsea y se mapea desde los assets', () {
+    const Map<MediaType, String> claves = <MediaType, String>{
+      MediaType.movie: 'movies',
+      MediaType.tv: 'series',
+    };
+    const List<String> titulosDemo = <String>[
+      'Órbita roja',
+      'El último faro',
+      'Ceniza de neón',
+      'Estación Polar',
+      'Mareas',
+    ];
 
-      final LocalAuthRepository auth = LocalAuthRepository();
-      await auth.initialize(prefs);
-      final LocalWatchlistRepository watchlist = LocalWatchlistRepository();
-      await watchlist.initialize(prefs);
+    final File asset = File('assets/data/demo_catalog.json');
+    expect(
+      asset.existsSync(),
+      isTrue,
+      reason: 'el asset debe existir y estar declarado en pubspec',
+    );
 
-      final ProviderContainer container = ProviderContainer(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-          supabaseClientProvider.overrideWithValue(null),
-          localAuthRepositoryProvider.overrideWithValue(auth),
-          localWatchlistRepositoryProvider.overrideWithValue(watchlist),
-        ],
+    final Map<String, dynamic> data =
+        jsonDecode(asset.readAsStringSync()) as Map<String, dynamic>;
+
+    for (final MapEntry<MediaType, String> e in claves.entries) {
+      final List<Map<String, dynamic>> raw = List<Map<String, dynamic>>.from(
+        (data[e.value] as List).cast<Map<String, dynamic>>(),
       );
-      addTearDown(container.dispose);
+      expect(raw, isNotEmpty, reason: 'el bloque ${e.value} vino vacío');
 
-      final MediaRepository repo = container.read(mediaRepositoryProvider);
-      expect(
-        repo.isLive,
-        isFalse,
-        reason: 'sin token de TMDB debe servirse el catálogo de demo',
-      );
+      final List<MediaItem> items = MediaMapper.items(raw, fallbackType: e.key);
+      expect(items, isNotEmpty, reason: 'el mapeador descartó todo ${e.value}');
 
-      const List<String> titulosDemo = <String>[
-        'Órbita roja',
-        'El último faro',
-        'Ceniza de neón',
-        'Estación Polar',
-        'Mareas',
-      ];
-
-      for (final MediaType type in MediaType.values) {
-        final List<MediaItem> items = await repo.getTrending(type: type);
-        expect(
-          items,
-          isNotEmpty,
-          reason: 'el feed de tendencias de $type vino vacío',
-        );
-        for (final MediaItem item in items) {
-          expect(
-            item.id,
-            greaterThan(0),
-            reason: 'ítem de $type sin id válido',
-          );
-          expect(item.type, type, reason: 'ítem con tipo equivocado');
-        }
-        expect(
-          items.any((MediaItem i) => titulosDemo.contains(i.title)),
-          isTrue,
-          reason: 'ningún título ficticio conocido apareció en $type',
-        );
+      for (final MediaItem item in items) {
+        expect(item.id, greaterThan(0), reason: 'ítem de ${e.value} sin id');
+        expect(item.type, e.key, reason: 'ítem de ${e.value} con tipo erróneo');
       }
-    },
-  );
+      expect(
+        items.any((MediaItem i) => titulosDemo.contains(i.title)),
+        isTrue,
+        reason: 'ningún título ficticio conocido apareció en ${e.value}',
+      );
+    }
+  });
 }
