@@ -5,7 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carimarshow/app.dart';
 import 'package:carimarshow/data/repositories/local_auth_repository.dart';
 import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
+import 'package:carimarshow/domain/entities/media_item.dart';
+import 'package:carimarshow/domain/entities/media_type.dart';
+import 'package:carimarshow/domain/repositories/media_repository.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
+import 'package:carimarshow/presentation/providers/media_providers.dart';
 
 /// Prueba de humo de extremo a extremo.
 ///
@@ -121,43 +125,71 @@ void main() {
     expect(find.textContaining('Modo demo'), findsWidgets);
   });
 
-  testWidgets('el catálogo de demo carga títulos desde los assets', (
-    WidgetTester tester,
-  ) async {
-    await hastaLogin(tester);
+  // Antes este test buscaba los títulos ficticios en la pantalla, pero en la
+  // superficie de 800x600 de `testWidgets` los carruseles de la portada quedan
+  // por debajo del pliegue y sus tarjetas ni se construyen: el test fallaba
+  // aunque el catálogo cargara perfectamente. Lo que de verdad quiere probar
+  // este test es que el asset existe, se parsea y se mapea a entidades, así
+  // que se comprueba en la capa de datos, que es donde vive esa garantía y
+  // donde el resultado no depende del layout ni del tamaño de pantalla.
+  test(
+    'el catálogo de demo se carga, se parsea y se mapea desde los assets',
+    () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await tester.tap(find.text('Continuar (modo local)'));
-    await settleUntil(tester, find.text('Mi lista'));
+      final LocalAuthRepository auth = LocalAuthRepository();
+      await auth.initialize(prefs);
+      final LocalWatchlistRepository watchlist = LocalWatchlistRepository();
+      await watchlist.initialize(prefs);
 
-    // El catálogo viene de un asset leído de forma asíncrona: se espera
-    // activamente a que alguno de los títulos ficticios llegue a pantalla.
-    const List<String> titulosDemo = <String>[
-      'Órbita roja',
-      'El último faro',
-      'Ceniza de neón',
-      'Estación Polar',
-      'Mareas',
-    ];
-    bool apareceDemo = false;
-    for (int i = 0; i < 40 && !apareceDemo; i++) {
-      apareceDemo = titulosDemo.any(
-        (String t) => find.textContaining(t).evaluate().isNotEmpty,
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(prefs),
+          supabaseClientProvider.overrideWithValue(null),
+          localAuthRepositoryProvider.overrideWithValue(auth),
+          localWatchlistRepositoryProvider.overrideWithValue(watchlist),
+        ],
       );
-      if (!apareceDemo) {
-        await tester.runAsync(
-          () => Future<void>.delayed(const Duration(milliseconds: 50)),
-        );
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-    }
+      addTearDown(container.dispose);
 
-    // Al menos uno de los títulos ficticios incluidos en demo_catalog.json
-    // debe haber llegado a la pantalla: prueba de que el asset existe, se
-    // parsea y se mapea a entidades sin errores.
-    expect(
-      apareceDemo,
-      isTrue,
-      reason: 'ningún título del catálogo de demo llegó a la UI',
-    );
-  });
+      final MediaRepository repo = container.read(mediaRepositoryProvider);
+      expect(
+        repo.isLive,
+        isFalse,
+        reason: 'sin token de TMDB debe servirse el catálogo de demo',
+      );
+
+      const List<String> titulosDemo = <String>[
+        'Órbita roja',
+        'El último faro',
+        'Ceniza de neón',
+        'Estación Polar',
+        'Mareas',
+      ];
+
+      for (final MediaType type in MediaType.values) {
+        final List<MediaItem> items = await repo.getTrending(type: type);
+        expect(
+          items,
+          isNotEmpty,
+          reason: 'el feed de tendencias de $type vino vacío',
+        );
+        for (final MediaItem item in items) {
+          expect(
+            item.id,
+            greaterThan(0),
+            reason: 'ítem de $type sin id válido',
+          );
+          expect(item.type, type, reason: 'ítem con tipo equivocado');
+        }
+        expect(
+          items.any((MediaItem i) => titulosDemo.contains(i.title)),
+          isTrue,
+          reason: 'ningún título ficticio conocido apareció en $type',
+        );
+      }
+    },
+  );
 }
