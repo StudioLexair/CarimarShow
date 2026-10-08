@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carimarshow/app.dart';
 import 'package:carimarshow/data/repositories/local_auth_repository.dart';
 import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
-import 'package:carimarshow/presentation/providers/auth_providers.dart';
 import 'package:carimarshow/presentation/providers/core_providers.dart';
 
 /// Prueba de humo de extremo a extremo.
