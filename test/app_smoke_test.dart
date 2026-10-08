@@ -135,8 +135,9 @@ void main() {
     ];
     bool apareceDemo = false;
     for (int i = 0; i < 80 && !apareceDemo; i++) {
-      apareceDemo = titulosDemo
-          .any((String t) => find.textContaining(t).evaluate().isNotEmpty);
+      apareceDemo = titulosDemo.any(
+        (String t) => find.textContaining(t).evaluate().isNotEmpty,
+      );
       if (!apareceDemo) await tester.pump(const Duration(milliseconds: 100));
     }
 
