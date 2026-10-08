@@ -1,4 +1,4 @@
-# Escala: qué soporta SinFlix y dónde está el techo
+# Escala: qué soporta CarimarShow y dónde está el techo
 
 Este documento responde a una pregunta concreta con números, no con
 intenciones: **¿cuántos usuarios activos aguanta el plan gratuito de Supabase
@@ -15,14 +15,14 @@ hay que pasar a Pro.
 No todos los límites del free tier importan igual. Ordenados por cuál muerde
 primero:
 
-| Recurso | Límite free | ¿Cuánto aguanta SinFlix? | Veredicto |
+| Recurso | Límite free | ¿Cuánto aguanta CarimarShow? | Veredicto |
 |---|---|---|---|
 | **Base de datos** | 500 MB | ~1,8 M de filas de `watchlist` tras 0002 | ⚠️ **El que muerde primero** |
 | **Realtime (conexiones)** | 200 simultáneas | ~200 usuarios con la lista abierta a la vez | ⚠️ Segundo en morder |
 | **Egreso (transferencia)** | 5 GB/mes | De sobra: las imágenes vienen del CDN de TMDB | ✅ |
 | **Usuarios activos (MAU)** | 50.000 | Justo el objetivo | ✅ Al límite por diseño |
 | **Correos de auth** | 2/hora | Sin confirmación por correo (autoconfirm) | ✅ Resuelto |
-| **Proyectos activos** | 2 | `sinflix-production` + `sinflix-staging` | ✅ Justo |
+| **Proyectos activos** | 2 | `carimarshow-production` + `carimarshow-staging` | ✅ Justo |
 | **Pausa por inactividad** | 7 días | N/A con uso real | ✅ |
 
 Fíjate en el detalle importante: **el límite de MAU no es el problema**. Supabase

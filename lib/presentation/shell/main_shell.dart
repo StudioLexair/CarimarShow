@@ -183,7 +183,7 @@ class _SideRail extends StatelessWidget {
   }
 }
 
-/// Logotipo de SinFlix.
+/// Logotipo de CarimarShow.
 class _BrandMark extends StatelessWidget {
   const _BrandMark({this.compact = false});
 

@@ -1,4 +1,4 @@
-# Contribuir a SinFlix
+# Contribuir a CarimarShow
 
 Gracias por pasarte. Este documento es corto a propósito: las reglas de verdad
 son tres y caben en un párrafo.
@@ -13,8 +13,8 @@ son tres y caben en un párrafo.
 ## Poner el entorno
 
 ```bash
-git clone https://github.com/StudioLexair/SinFlix.git
-cd SinFlix
+git clone https://github.com/StudioLexair/CarimarShow.git
+cd CarimarShow
 flutter pub get
 flutter test        # debe pasar todo sin configurar nada (modo demo)
 ./scripts/run.sh    # si tienes .env con tu token de TMDB
@@ -84,7 +84,7 @@ Para vulnerabilidades de seguridad, **no abras un issue público**: mira
 
 ## Qué no aceptaríamos
 
-- Código que reproduzca o aloje contenido con copyright. SinFlix es un
+- Código que reproduzca o aloje contenido con copyright. CarimarShow es un
   catálogo: muestra metadatos públicos y enlaza tráilers oficiales. Nunca
   streaming ni descargas de vídeo.
 - Dependencias que exijan `build_runner` sin una razón de peso. El proyecto

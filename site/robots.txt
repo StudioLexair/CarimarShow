@@ -1,5 +1,5 @@
-# SinFlix — página de descargas
-# https://studiolexair.github.io/SinFlix/
+# CarimarShow — página de descargas
+# https://studiolexair.github.io/CarimarShow/
 
 User-agent: *
 Allow: /
@@ -8,4 +8,4 @@ Allow: /
 # devuelven 404 con cuerpo válido (truco del 404.html). Mejor no rastrearlas.
 Disallow: /app/
 
-Sitemap: https://studiolexair.github.io/SinFlix/sitemap.xml
+Sitemap: https://studiolexair.github.io/CarimarShow/sitemap.xml

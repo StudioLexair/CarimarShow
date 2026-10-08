@@ -7,12 +7,12 @@ import 'core/theme/app_theme.dart';
 import 'presentation/providers/core_providers.dart';
 import 'presentation/router/app_router.dart';
 
-/// Widget raíz de SinFlix.
+/// Widget raíz de CarimarShow.
 ///
 /// No contiene lógica de negocio: solo engancha el router, el tema y la
 /// localización. Todo el estado se gestiona mediante Riverpod.
-class SinFlixApp extends ConsumerWidget {
-  const SinFlixApp({super.key});
+class CarimarShowApp extends ConsumerWidget {
+  const CarimarShowApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

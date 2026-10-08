@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Punto de ruptura y utilidades de diseño adaptable.
 ///
-/// SinFlix corre en móvil, tablet, escritorio y web, así que el número de
+/// CarimarShow corre en móvil, tablet, escritorio y web, así que el número de
 /// columnas de pósters y el tipo de navegación (barra inferior vs. rail
 /// lateral) se deciden aquí y en un solo sitio.
 abstract final class Breakpoints {

@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════════════
---  SinFlix — esquema inicial de Supabase
+--  CarimarShow — esquema inicial de Supabase
 -- ══════════════════════════════════════════════════════════════════════════
 --
 --  Aplica este archivo en tu proyecto Supabase:
@@ -34,7 +34,7 @@ create table if not exists public.profiles (
 );
 
 comment on table public.profiles is
-  'Perfil público de cada usuario de SinFlix. Una fila por cada auth.users.';
+  'Perfil público de cada usuario de CarimarShow. Una fila por cada auth.users.';
 
 -- ── Trigger: crear el perfil automáticamente al registrarse ───────────────
 -- Sin esto, el primer arranque de un usuario nuevo no tendría fila y la app

@@ -1,43 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sinflix/app.dart';
-import 'package:sinflix/core/constants/app_strings.dart';
-import 'package:sinflix/core/constants/tmdb_constants.dart';
-import 'package:sinflix/core/errors/app_exception.dart';
-import 'package:sinflix/core/theme/app_colors.dart';
-import 'package:sinflix/core/theme/app_theme.dart';
-import 'package:sinflix/core/utils/responsive.dart';
-import 'package:sinflix/core/widgets/app_error_view.dart';
-import 'package:sinflix/core/widgets/poster_image.dart';
-import 'package:sinflix/core/widgets/section_header.dart';
-import 'package:sinflix/domain/entities/cast_member.dart';
-import 'package:sinflix/domain/entities/media_id.dart';
-import 'package:sinflix/domain/entities/media_item.dart';
-import 'package:sinflix/domain/entities/media_type.dart';
-import 'package:sinflix/domain/repositories/media_repository.dart';
-import 'package:sinflix/presentation/providers/media_providers.dart';
-import 'package:sinflix/presentation/providers/watchlist_providers.dart';
-import 'package:sinflix/presentation/screens/auth/auth_widgets.dart';
-import 'package:sinflix/presentation/screens/auth/login_screen.dart';
-import 'package:sinflix/presentation/screens/auth/register_screen.dart';
-import 'package:sinflix/presentation/screens/catalog/catalog_screen.dart';
-import 'package:sinflix/presentation/screens/detail/media_detail_screen.dart';
-import 'package:sinflix/presentation/screens/home/home_screen.dart';
-import 'package:sinflix/presentation/screens/movies/movies_screen.dart';
-import 'package:sinflix/presentation/screens/profile/profile_screen.dart';
-import 'package:sinflix/presentation/screens/search/search_screen.dart';
-import 'package:sinflix/presentation/screens/series/series_screen.dart';
-import 'package:sinflix/presentation/screens/splash_screen.dart';
-import 'package:sinflix/presentation/screens/watchlist/watchlist_screen.dart';
-import 'package:sinflix/presentation/widgets/brand_app_bar.dart';
-import 'package:sinflix/presentation/widgets/cast_row.dart';
-import 'package:sinflix/presentation/widgets/demo_mode_banner.dart';
-import 'package:sinflix/presentation/widgets/hero_backdrop.dart';
-import 'package:sinflix/presentation/widgets/media_carousel.dart';
-import 'package:sinflix/presentation/widgets/media_grid.dart';
-import 'package:sinflix/presentation/widgets/media_poster_card.dart';
-import 'package:sinflix/presentation/widgets/rating_badge.dart';
-import 'package:sinflix/presentation/widgets/watchlist_toggle.dart';
+import 'package:carimarshow/app.dart';
+import 'package:carimarshow/core/constants/app_strings.dart';
+import 'package:carimarshow/core/constants/tmdb_constants.dart';
+import 'package:carimarshow/core/errors/app_exception.dart';
+import 'package:carimarshow/core/theme/app_colors.dart';
+import 'package:carimarshow/core/theme/app_theme.dart';
+import 'package:carimarshow/core/utils/responsive.dart';
+import 'package:carimarshow/core/widgets/app_error_view.dart';
+import 'package:carimarshow/core/widgets/poster_image.dart';
+import 'package:carimarshow/core/widgets/section_header.dart';
+import 'package:carimarshow/domain/entities/cast_member.dart';
+import 'package:carimarshow/domain/entities/media_id.dart';
+import 'package:carimarshow/domain/entities/media_item.dart';
+import 'package:carimarshow/domain/entities/media_type.dart';
+import 'package:carimarshow/domain/repositories/media_repository.dart';
+import 'package:carimarshow/presentation/providers/media_providers.dart';
+import 'package:carimarshow/presentation/providers/watchlist_providers.dart';
+import 'package:carimarshow/presentation/screens/auth/auth_widgets.dart';
+import 'package:carimarshow/presentation/screens/auth/login_screen.dart';
+import 'package:carimarshow/presentation/screens/auth/register_screen.dart';
+import 'package:carimarshow/presentation/screens/catalog/catalog_screen.dart';
+import 'package:carimarshow/presentation/screens/detail/media_detail_screen.dart';
+import 'package:carimarshow/presentation/screens/home/home_screen.dart';
+import 'package:carimarshow/presentation/screens/movies/movies_screen.dart';
+import 'package:carimarshow/presentation/screens/profile/profile_screen.dart';
+import 'package:carimarshow/presentation/screens/search/search_screen.dart';
+import 'package:carimarshow/presentation/screens/series/series_screen.dart';
+import 'package:carimarshow/presentation/screens/splash_screen.dart';
+import 'package:carimarshow/presentation/screens/watchlist/watchlist_screen.dart';
+import 'package:carimarshow/presentation/widgets/brand_app_bar.dart';
+import 'package:carimarshow/presentation/widgets/cast_row.dart';
+import 'package:carimarshow/presentation/widgets/demo_mode_banner.dart';
+import 'package:carimarshow/presentation/widgets/hero_backdrop.dart';
+import 'package:carimarshow/presentation/widgets/media_carousel.dart';
+import 'package:carimarshow/presentation/widgets/media_grid.dart';
+import 'package:carimarshow/presentation/widgets/media_poster_card.dart';
+import 'package:carimarshow/presentation/widgets/rating_badge.dart';
+import 'package:carimarshow/presentation/widgets/watchlist_toggle.dart';
 
 /// Cobertura de compilación de toda la capa de presentación.
 ///
@@ -62,7 +62,7 @@ void main() {
   test('la app y todas las pantallas construyen sin errores de tipo', () {
     final List<Widget> widgets = <Widget>[
       // Raíz
-      const SinFlixApp(),
+      const CarimarShowApp(),
       const SplashScreen(),
 
       // Acceso
@@ -176,7 +176,7 @@ void main() {
   });
 
   test('las utilidades de texto y constantes están accesibles', () {
-    expect(Strings.appName, 'SinFlix');
+    expect(Strings.appName, 'CarimarShow');
     expect(AppColors.placeholderFor(0), hasLength(2));
     expect(AppColors.placeholderFor(-7), hasLength(2));
     expect(Breakpoints.compact, lessThan(Breakpoints.expanded));

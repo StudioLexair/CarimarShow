@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════════════════
-#  Crea el repositorio de SinFlix y sube el primer commit
+#  Crea el repositorio de CarimarShow y sube el primer commit
 # ══════════════════════════════════════════════════════════════════════════
 #
 #  Uso:
@@ -23,7 +23,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-REPO_NAME="sinflix"
+REPO_NAME="carimarshow"
 VISIBILITY=""
 
 while [[ $# -gt 0 ]]; do
@@ -88,7 +88,7 @@ git add -A
 if git diff --cached --quiet; then
   echo "· No hay cambios que commitear"
 else
-  git commit -q -m "feat: SinFlix — app multiplataforma de películas y series
+  git commit -q -m "feat: CarimarShow — app multiplataforma de películas y series
 
 - Flutter para iOS, Android, Web, Windows, macOS y Linux
 - Catálogo con la API de TMDB (tendencias, populares, mejor valoradas,

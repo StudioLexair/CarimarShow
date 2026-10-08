@@ -77,23 +77,23 @@ La web de descarga empareja binarios con plataformas **por nombre de archivo**,
 no por metadatos. Si cambias estos nombres, hay que tocar `site/index.html`:
 
 ```
-sinflix-<versión>-android-arm64-v8a.apk
-sinflix-<versión>-android-armv7.apk
-sinflix-<versión>-android-x86_64.apk
-sinflix-<versión>-android-universal.apk
-sinflix-<versión>-android.aab
-sinflix-<versión>-windows-x64.zip
-sinflix-<versión>-linux-x64.tar.gz
-sinflix-<versión>-linux-amd64.deb
-sinflix-<versión>-macos-arm64.zip
-sinflix-<versión>-macos-x64.zip
-sinflix-<versión>-web.zip
+carimarshow-<versión>-android-arm64-v8a.apk
+carimarshow-<versión>-android-armv7.apk
+carimarshow-<versión>-android-x86_64.apk
+carimarshow-<versión>-android-universal.apk
+carimarshow-<versión>-android.aab
+carimarshow-<versión>-windows-x64.zip
+carimarshow-<versión>-linux-x64.tar.gz
+carimarshow-<versión>-linux-amd64.deb
+carimarshow-<versión>-macos-arm64.zip
+carimarshow-<versión>-macos-x64.zip
+carimarshow-<versión>-web.zip
 ```
 
 ### Firmado de Android
 
 El keystore vive en el secreto `ANDROID_KEYSTORE_BASE64` (PKCS12 en base64).
-En el build se materializa en `android/sinflix-release.keystore` junto a un
+En el build se materializa en `android/carimarshow-release.keystore` junto a un
 `android/key.properties` efímero; ambos están en `.gitignore`. Gradle lee
 `key.properties` y firma con `storeType = "PKCS12"`.
 
@@ -103,7 +103,7 @@ instalable), solo no sirve para subir a una tienda.
 
 > ⚠️ El keystore es la identidad de la app en Android. Si lo pierdes, no puedes
 > publicar actualizaciones de esa app jamás. Está respaldado en los secretos
-> del repositorio y en `sinflix-signing/` (fuera de git).
+> del repositorio y en `carimarshow-signing/` (fuera de git).
 
 ### Por qué el AAB no aparece en la web
 
@@ -116,8 +116,8 @@ usuario (lo marca como `dev`).
 Publica dos cosas en el mismo sitio de GitHub Pages:
 
 ```
-https://studiolexair.github.io/SinFlix/        landing de descarga
-https://studiolexair.github.io/SinFlix/app/    la app Flutter compilada
+https://studiolexair.github.io/CarimarShow/        landing de descarga
+https://studiolexair.github.io/CarimarShow/app/    la app Flutter compilada
 ```
 
 ### El detalle que importa: `release.json`
@@ -152,7 +152,7 @@ token de larga duración guardado en secretos que haya que rotar.
 |---|---|---|
 | `ANDROID_KEYSTORE_BASE64` | secreto | Keystore PKCS12 de firmado de release |
 | `ANDROID_KEYSTORE_PASSWORD` | secreto | Contraseña del keystore |
-| `ANDROID_KEY_ALIAS` | secreto | Alias de la clave (`sinflix`) |
+| `ANDROID_KEY_ALIAS` | secreto | Alias de la clave (`carimarshow`) |
 | `ANDROID_KEY_PASSWORD` | secreto | Contraseña de la clave |
 | `TMDB_READ_TOKEN` | secreto | **Añádelo tú**: sin él, las releases salen en modo demo |
 | `SUPABASE_URL_PROD` / `_STAGING` | variable | URL del proyecto (pública por diseño) |
@@ -185,8 +185,8 @@ git tag v1.0.0
 git push origin v1.0.0
 
 # 4. Sigue el progreso en Actions. Al terminar:
-#    · Release en github.com/StudioLexair/SinFlix/releases
-#    · Web actualizada en studiolexair.github.io/SinFlix
+#    · Release en github.com/StudioLexair/CarimarShow/releases
+#    · Web actualizada en studiolexair.github.io/CarimarShow
 ```
 
 Las versiones con guion (`v1.0.0-rc.1`) se publican como **prerelease**

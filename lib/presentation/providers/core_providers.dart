@@ -110,8 +110,8 @@ final Provider<WatchlistRepository> watchlistRepositoryProvider =
 //  Preferencias de la app
 // ══════════════════════════════════════════════════════════════════════════
 
-const String _kThemeMode = 'sinflix.prefs.themeMode';
-const String _kAdultContent = 'sinflix.prefs.adultContent';
+const String _kThemeMode = 'carimarshow.prefs.themeMode';
+const String _kAdultContent = 'carimarshow.prefs.adultContent';
 
 /// Descodifica el valor guardado, tolerando datos inválidos o de versiones
 /// anteriores de la app.

@@ -131,7 +131,7 @@ class _HomeContent extends ConsumerWidget {
               ),
               const SizedBox(width: 9),
               const Text(
-                'SinFlix',
+                'CarimarShow',
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w900,
@@ -299,7 +299,7 @@ class _FooterAttribution extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'SinFlix · ${Formatters.year(DateTime.now())}',
+            'CarimarShow · ${Formatters.year(DateTime.now())}',
             style: const TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,

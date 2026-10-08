@@ -4,7 +4,7 @@
 /// sueltas por toda la UI y deja el camino preparado para migrar a ARB
 /// (`flutter gen-l10n`) cuando se necesiten varios idiomas.
 abstract final class Strings {
-  static const String appName = 'SinFlix';
+  static const String appName = 'CarimarShow';
   static const String appTagline =
       'Películas y series, en todos tus dispositivos';
 

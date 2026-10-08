@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sinflix/data/mappers/local_codec.dart';
-import 'package:sinflix/data/repositories/local_watchlist_repository.dart';
-import 'package:sinflix/domain/entities/media_id.dart';
-import 'package:sinflix/domain/entities/media_item.dart';
-import 'package:sinflix/domain/entities/media_type.dart';
-import 'package:sinflix/domain/entities/watchlist_item.dart';
+import 'package:carimarshow/data/mappers/local_codec.dart';
+import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
+import 'package:carimarshow/domain/entities/media_id.dart';
+import 'package:carimarshow/domain/entities/media_item.dart';
+import 'package:carimarshow/domain/entities/media_type.dart';
+import 'package:carimarshow/domain/entities/watchlist_item.dart';
 
 const MediaItem _movie = MediaItem(
   id: 155,
@@ -298,7 +298,7 @@ void main() {
 
     test('una lista persistida corrupta no bloquea el arranque', () async {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('sinflix.watchlist.u1', '{json roto');
+      await prefs.setString('carimarshow.watchlist.u1', '{json roto');
 
       final LocalWatchlistRepository otra = LocalWatchlistRepository();
       await otra.initialize(prefs);

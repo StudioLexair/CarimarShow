@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════════════════
-#  Arranca SinFlix inyectando la configuración del archivo .env
+#  Arranca CarimarShow inyectando la configuración del archivo .env
 # ══════════════════════════════════════════════════════════════════════════
 #
 #  Uso:

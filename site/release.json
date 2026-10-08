@@ -1,5 +1,5 @@
 {
   "available": false,
   "reason": "Archivo de marcador de posición para desarrollo local. El CI lo sobrescribe en cada despliegue con los datos del último Release.",
-  "releases_url": "https://github.com/StudioLexair/SinFlix/releases"
+  "releases_url": "https://github.com/StudioLexair/CarimarShow/releases"
 }

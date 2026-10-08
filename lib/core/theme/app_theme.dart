@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'app_colors.dart';
 
-/// Construcción del tema de SinFlix.
+/// Construcción del tema de CarimarShow.
 ///
 /// La app es oscura por diseño (un catálogo de cine se ve mejor así), pero se
 /// expone [buildLight] para quien prefiera forzar el tema claro desde Ajustes.

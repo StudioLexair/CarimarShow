@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════════════════════════════════════
-#  SinFlix · Compilación y publicación de releases
+#  CarimarShow · Compilación y publicación de releases
 # ══════════════════════════════════════════════════════════════════════════
 #
 #  Se dispara al crear un tag `v*` (p. ej. `git tag v1.0.0 && git push --tags`)
@@ -122,14 +122,14 @@ jobs:
             exit 0
           fi
           mkdir -p android
-          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/sinflix-release.keystore
-          SIZE=$(stat -c%s android/sinflix-release.keystore)
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/carimarshow-release.keystore
+          SIZE=$(stat -c%s android/carimarshow-release.keystore)
           if [ "$SIZE" -lt 500 ]; then
             echo "::error::El keystore descodificado pesa $SIZE bytes: el secreto ANDROID_KEYSTORE_BASE64 está mal."
             exit 1
           fi
           {
-            echo "storeFile=sinflix-release.keystore"
+            echo "storeFile=carimarshow-release.keystore"
             echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
             echo "keyAlias=${ANDROID_KEY_ALIAS:-sinflix}"
             echo "keyPassword=$ANDROID_KEY_PASSWORD"
@@ -213,11 +213,11 @@ jobs:
         run: |
           mkdir -p dist
           SRC=build/app/outputs/flutter-apk
-          mv "$SRC/app-arm64-v8a-release.apk"    "dist/sinflix-$VERSION-android-arm64-v8a.apk"
-          mv "$SRC/app-armeabi-v7a-release.apk"  "dist/sinflix-$VERSION-android-armv7.apk"
-          mv "$SRC/app-x86_64-release.apk"       "dist/sinflix-$VERSION-android-x86_64.apk" 2>/dev/null || true
-          mv "$SRC/app-release.apk"              "dist/sinflix-$VERSION-android-universal.apk"
-          mv build/app/outputs/bundle/release/app-release.aab "dist/sinflix-$VERSION-android.aab"
+          mv "$SRC/app-arm64-v8a-release.apk"    "dist/carimarshow-$VERSION-android-arm64-v8a.apk"
+          mv "$SRC/app-armeabi-v7a-release.apk"  "dist/carimarshow-$VERSION-android-armv7.apk"
+          mv "$SRC/app-x86_64-release.apk"       "dist/carimarshow-$VERSION-android-x86_64.apk" 2>/dev/null || true
+          mv "$SRC/app-release.apk"              "dist/carimarshow-$VERSION-android-universal.apk"
+          mv build/app/outputs/bundle/release/app-release.aab "dist/carimarshow-$VERSION-android.aab"
           ls -la dist
 
       - uses: actions/upload-artifact@v4
@@ -262,17 +262,17 @@ jobs:
       - name: Compilar web
         # `--base-href /` porque este ZIP es para autohospedarlo en cualquier
         # sitio. La copia que se sirve en GitHub Pages se compila aparte en
-        # `site.yml` con `--base-href /SinFlix/app/`.
+        # `site.yml` con `--base-href /CarimarShow/app/`.
         run: flutter build web --release --base-href / $DART_DEFINES
 
       - name: Empaquetar
         run: |
           mkdir -p dist
           cd build/web
-          zip -qr "../../dist/sinflix-$VERSION-web.zip" .
+          zip -qr "../../dist/carimarshow-$VERSION-web.zip" .
           cd ../..
           cat > dist/LEEME-web.txt <<EOF
-          SinFlix $VERSION — versión web
+          CarimarShow $VERSION — versión web
 
           Descomprime este ZIP y sirve la carpeta con CUALQUIER servidor
           estático. Hace falta un servidor: abrir index.html con doble clic
@@ -334,7 +334,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
           Compress-Archive -Path build\windows\x64\runner\Release\* `
-                           -DestinationPath "dist\sinflix-$env:VERSION-windows-x64.zip"
+                           -DestinationPath "dist\carimarshow-$env:VERSION-windows-x64.zip"
           Get-ChildItem dist | Format-Table Name, Length
 
       - uses: actions/upload-artifact@v4
@@ -391,48 +391,48 @@ jobs:
         run: |
           mkdir -p dist
           cd build/linux/x64/release/bundle
-          tar -czf "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-linux-x64.tar.gz" .
+          tar -czf "$GITHUB_WORKSPACE/dist/carimarshow-$VERSION-linux-x64.tar.gz" .
           cd "$GITHUB_WORKSPACE"
 
           # .deb opcional: la misma app con instalación de un clic en
           # Debian/Ubuntu. Si `dpkg-deb` no está, se avisa y el tar.gz sigue
           # publicándose: el release nunca se cae por un extra.
           ROOT=$(mktemp -d)
-          mkdir -p "$ROOT/DEBIAN" "$ROOT/usr/lib/sinflix" \
+          mkdir -p "$ROOT/DEBIAN" "$ROOT/usr/lib/carimarshow" \
                    "$ROOT/usr/share/applications" "$ROOT/usr/share/pixmaps"
-          cp -r build/linux/x64/release/bundle/. "$ROOT/usr/lib/sinflix/"
+          cp -r build/linux/x64/release/bundle/. "$ROOT/usr/lib/carimarshow/"
 
           # Icono real del proyecto en vez de una ruta inventada.
           ICON=android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
-          [ -f "$ICON" ] && cp "$ICON" "$ROOT/usr/share/pixmaps/sinflix.png"
+          [ -f "$ICON" ] && cp "$ICON" "$ROOT/usr/share/pixmaps/carimarshow.png"
 
           cat > "$ROOT/DEBIAN/control" <<EOF
-          Package: sinflix
+          Package: carimarshow
           Version: $VERSION
           Section: video
           Priority: optional
           Architecture: amd64
-          Maintainer: SinFlix <studiolexair@users.noreply.github.com>
+          Maintainer: CarimarShow <studiolexair@users.noreply.github.com>
           Depends: libgtk-3-0, liblzma5
-          Homepage: https://github.com/StudioLexair/SinFlix
+          Homepage: https://github.com/StudioLexair/CarimarShow
           Description: Catalogo de peliculas y series
-           SinFlix es un catalogo multiplataforma de peliculas y series
+           CarimarShow es un catalogo multiplataforma de peliculas y series
            construido con Flutter. No reproduce ni aloja contenido:
            solo muestra informacion publica de catalogos.
           EOF
 
-          cat > "$ROOT/usr/share/applications/sinflix.desktop" <<EOF
+          cat > "$ROOT/usr/share/applications/carimarshow.desktop" <<EOF
           [Desktop Entry]
           Type=Application
-          Name=SinFlix
+          Name=CarimarShow
           Comment=Catálogo de películas y series
-          Exec=/usr/lib/sinflix/sinflix
-          Icon=sinflix
+          Exec=/usr/lib/carimarshow/carimarshow
+          Icon=carimarshow
           Terminal=false
           Categories=Video;AudioVideo;
           EOF
 
-          dpkg-deb --build --root-owner-group "$ROOT" "dist/sinflix-$VERSION-linux-amd64.deb" \
+          dpkg-deb --build --root-owner-group "$ROOT" "dist/carimarshow-$VERSION-linux-amd64.deb" \
             || echo "::warning::No se pudo generar el .deb; el tar.gz sí está."
           rm -rf "$ROOT"
           ls -la dist
@@ -485,22 +485,22 @@ jobs:
           APP=$(ls -d *.app | head -1)
           echo "→ empaquetando $APP"
           ditto -c -k --sequesterRsrc --keepParent "$APP" \
-                "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-macos-arm64.zip"
+                "$GITHUB_WORKSPACE/dist/carimarshow-$VERSION-macos-arm64.zip"
           cd "$GITHUB_WORKSPACE"
           # Sin notarizar: al abrirlo, clic derecho → Abrir (o quitar la
           # cuarentena). Se documenta en la página de descarga.
           cat > dist/LEEME-macos.txt <<EOF
-          SinFlix $VERSION — macOS (Apple Silicon)
+          CarimarShow $VERSION — macOS (Apple Silicon)
 
           Esta build NO está firmada ni notariada por Apple (hace falta una
           cuenta de Apple Developer). Para abrirla:
 
             1. Descomprime el ZIP.
-            2. Clic DERECHO sobre SinFlix.app → Abrir → Abrir.
+            2. Clic DERECHO sobre CarimarShow.app → Abrir → Abrir.
 
           Si macOS sigue bloqueándola:
 
-            xattr -dr com.apple.quarantine /ruta/a/SinFlix.app
+            xattr -dr com.apple.quarantine /ruta/a/CarimarShow.app
 
           o en Ajustes → Privacidad y seguridad → "Abrir de todos modos".
           EOF
@@ -555,7 +555,7 @@ jobs:
           cd build/macos/Build/Products/Release
           APP=$(ls -d *.app | head -1)
           ditto -c -k --sequesterRsrc --keepParent "$APP" \
-                "$GITHUB_WORKSPACE/dist/sinflix-$VERSION-macos-x64.zip"
+                "$GITHUB_WORKSPACE/dist/carimarshow-$VERSION-macos-x64.zip"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -648,9 +648,9 @@ jobs:
         id: notes
         run: |
           {
-            echo "## SinFlix $VERSION"
+            echo "## CarimarShow $VERSION"
             echo
-            echo "**Descarga directa:** [studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/) — detecta tu dispositivo y te da el archivo correcto."
+            echo "**Descarga directa:** [studiolexair.github.io/CarimarShow](https://studiolexair.github.io/CarimarShow/) — detecta tu dispositivo y te da el archivo correcto."
             echo
             echo "### Qué bajar"
             echo
@@ -664,7 +664,7 @@ jobs:
             echo "| Linux (cualquier distro) | \`-linux-x64.tar.gz\` |"
             echo "| Mac con chip M1/M2/M3/M4 | \`-macos-arm64.zip\` |"
             echo "| Mac con Intel | \`-macos-x64.zip\` |"
-            echo "| Cualquier navegador | \`-web.zip\` o la [app web](https://studiolexair.github.io/SinFlix/app/) |"
+            echo "| Cualquier navegador | \`-web.zip\` o la [app web](https://studiolexair.github.io/CarimarShow/app/) |"
             echo
             echo "### Android: «instalación de origen desconocido»"
             echo
@@ -678,19 +678,19 @@ jobs:
             echo "Clic derecho sobre la app → **Abrir**, o bien:"
             echo
             echo '```'
-            echo "xattr -dr com.apple.quarantine /ruta/a/SinFlix.app"
+            echo "xattr -dr com.apple.quarantine /ruta/a/CarimarShow.app"
             echo '```'
             echo
             echo "### iOS"
             echo
             echo "Todavía no: distribuir un \`.ipa\` instalable exige una cuenta de Apple"
-            echo "Developer. Mientras tanto, la [versión web](https://studiolexair.github.io/SinFlix/app/)"
+            echo "Developer. Mientras tanto, la [versión web](https://studiolexair.github.io/CarimarShow/app/)"
             echo "funciona en Safari y se puede añadir a la pantalla de inicio."
             echo
             echo "### Verificar la descarga"
             echo
             echo '```'
-            echo "sha256sum sinflix-$VERSION-android-arm64-v8a.apk"
+            echo "sha256sum carimarshow-$VERSION-android-arm64-v8a.apk"
             echo "grep android-arm64 SHA256SUMS.txt"
             echo '```'
             echo
@@ -705,7 +705,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
-          name: SinFlix ${{ env.VERSION }}
+          name: CarimarShow ${{ env.VERSION }}
           body_path: release/NOTES.md
           draft: false
           prerelease: ${{ contains(env.VERSION, '-') }}

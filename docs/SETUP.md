@@ -1,6 +1,6 @@
 # Guía de configuración
 
-SinFlix funciona **sin configurar nada** (modo demo). Esta guía explica cómo
+CarimarShow funciona **sin configurar nada** (modo demo). Esta guía explica cómo
 activar cada capacidad real. Todos los pasos son independientes: puedes hacer
 solo el 1, o el 1 y el 2, o ninguno.
 
@@ -82,7 +82,7 @@ dispositivo: totalmente funcional, pero no sincroniza entre dispositivos.
 ### 2.1 Crear el proyecto
 
 1. Regístrate en <https://supabase.com> (plan gratuito suficiente).
-2. **New project** → elige organización, nombre (`sinflix`), contraseña de base
+2. **New project** → elige organización, nombre (`carimarshow`), contraseña de base
    de datos y región cercana.
 3. Espera ~2 minutos al aprovisionamiento.
 
@@ -273,7 +273,7 @@ hosting debe redirigir todo a `index.html`.
 ### Identificador de paquete (antes de publicar)
 
 Las seis plataformas se generaron con el identificador provisional
-`com.sinflix.sinflix`. **Cámbialo antes de publicar en una tienda**: es
+`com.carimarshow.app`. **Cámbialo antes de publicar en una tienda**: es
 inmutable una vez subida la app.
 
 | Plataforma | Dónde |
@@ -282,7 +282,7 @@ inmutable una vez subida la app.
 | iOS / macOS | `PRODUCT_BUNDLE_IDENTIFIER` en `ios/Runner.xcodeproj/project.pbxproj` y en `macos/Runner/Configs/AppInfo.xcconfig` |
 | Web / Linux / Windows | No aplica |
 
-Los **nombres visibles** ya están puestos a `SinFlix` en las seis plataformas
+Los **nombres visibles** ya están puestos a `CarimarShow` en las seis plataformas
 (etiqueta de Android, `CFBundleDisplayName` en iOS, título de ventana en
 Windows y Linux, `PRODUCT_NAME` en macOS, `<title>` y manifiesto en web).
 

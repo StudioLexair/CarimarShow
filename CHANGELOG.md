@@ -1,6 +1,6 @@
 # Changelog
 
-Todos los cambios notables de SinFlix se documentan aquí.
+Todos los cambios notables de CarimarShow se documentan aquí.
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/) y
 este proyecto adhiere [SemVer](https://semver.org/lang/es/).
@@ -50,7 +50,7 @@ este proyecto adhiere [SemVer](https://semver.org/lang/es/).
   llene el disco de tuplas muertas.
 
 ### Infraestructura
-- Proyectos Supabase renombrados a `sinflix-production` y `sinflix-staging`
+- Proyectos Supabase renombrados a `carimarshow-production` y `carimarshow-staging`
   (antes `velmora-*`), con el esquema previo vaciado por completo.
 - Autenticación de Supabase con **autoconfirm activado**: el free tier solo
   envía 2 correos/hora, inviable para confirmación de registro a escala.
@@ -74,5 +74,5 @@ este proyecto adhiere [SemVer](https://semver.org/lang/es/).
 - Diseño adaptable de 2 a 7 columnas con barra inferior o rail lateral.
 - Tema claro/oscuro persistido y filtro de contenido para adultos.
 
-[Sin publicar]: https://github.com/StudioLexair/SinFlix/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/StudioLexair/SinFlix/releases/tag/v0.1.0
+[Sin publicar]: https://github.com/StudioLexair/CarimarShow/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/StudioLexair/CarimarShow/releases/tag/v0.1.0

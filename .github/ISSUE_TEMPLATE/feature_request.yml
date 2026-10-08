@@ -28,7 +28,7 @@ body:
     id: alcance
     attributes:
       label: Encaje con el proyecto
-      description: SinFlix es un catálogo, no un reproductor. Ver «Qué no se ha hecho» en docs/ARCHITECTURE.md.
+      description: CarimarShow es un catálogo, no un reproductor. Ver «Qué no se ha hecho» en docs/ARCHITECTURE.md.
       options:
         - label: No implica reproducir, alojar ni descargar vídeo con copyright
           required: true

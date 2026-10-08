@@ -14,7 +14,7 @@ import '../mappers/media_mapper.dart';
 
 /// Catálogo local de respaldo.
 ///
-/// Permite que SinFlix arranque y se pueda explorar **sin ninguna credencial**:
+/// Permite que CarimarShow arranque y se pueda explorar **sin ninguna credencial**:
 /// ni token de TMDB ni backend. Sirve un conjunto de títulos ficticios incluidos
 /// en `assets/data/demo_catalog.json`.
 ///

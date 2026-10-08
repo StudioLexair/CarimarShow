@@ -20,7 +20,7 @@ class LocalWatchlistRepository implements WatchlistRepository {
   LocalWatchlistRepository({SharedPreferences? preferences})
     : _prefs = preferences;
 
-  static const String _keyPrefix = 'sinflix.watchlist.';
+  static const String _keyPrefix = 'carimarshow.watchlist.';
 
   SharedPreferences? _prefs;
 

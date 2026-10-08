@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════════════════════════════════════
-#  SinFlix · Integración continua
+#  CarimarShow · Integración continua
 # ══════════════════════════════════════════════════════════════════════════
 #
 #  Se ejecuta en cada push a `main` y en cada pull request. Tres puertas, en

@@ -19,7 +19,7 @@ import '../../domain/repositories/auth_repository.dart';
 class LocalAuthRepository implements AuthRepository {
   LocalAuthRepository({SharedPreferences? preferences}) : _prefs = preferences;
 
-  static const String _storageKey = 'sinflix.local.user';
+  static const String _storageKey = 'carimarshow.local.user';
 
   SharedPreferences? _prefs;
   AppUser? _current;

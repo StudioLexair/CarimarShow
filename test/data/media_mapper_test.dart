@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sinflix/data/mappers/media_mapper.dart';
-import 'package:sinflix/domain/entities/media_details.dart';
-import 'package:sinflix/domain/entities/media_item.dart';
-import 'package:sinflix/domain/entities/media_type.dart';
+import 'package:carimarshow/data/mappers/media_mapper.dart';
+import 'package:carimarshow/domain/entities/media_details.dart';
+import 'package:carimarshow/domain/entities/media_item.dart';
+import 'package:carimarshow/domain/entities/media_type.dart';
 
 /// Respuesta real de `/movie/popular` (película).
 const Map<String, dynamic> _movieJson = <String, dynamic>{

@@ -1,6 +1,6 @@
 {
-    "name": "SinFlix",
-    "short_name": "SinFlix",
+    "name": "CarimarShow",
+    "short_name": "CarimarShow",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#08080C",

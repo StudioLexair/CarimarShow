@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sinflix/core/constants/tmdb_constants.dart';
-import 'package:sinflix/core/utils/tmdb_images.dart';
-import 'package:sinflix/domain/entities/media_type.dart';
-import 'package:sinflix/domain/entities/media_video.dart';
+import 'package:carimarshow/core/constants/tmdb_constants.dart';
+import 'package:carimarshow/core/utils/tmdb_images.dart';
+import 'package:carimarshow/domain/entities/media_type.dart';
+import 'package:carimarshow/domain/entities/media_video.dart';
 
 void main() {
   group('MediaType', () {

@@ -56,7 +56,7 @@ Future<void> main() async {
         localAuthRepositoryProvider.overrideWithValue(localAuth),
         localWatchlistRepositoryProvider.overrideWithValue(localWatchlist),
       ],
-      child: const SinFlixApp(),
+      child: const CarimarShowApp(),
     ),
   );
 }
@@ -86,7 +86,7 @@ Future<sb.SupabaseClient?> _initSupabase() async {
 
 void _logStartup() {
   if (!kDebugMode) return;
-  _log('Arrancando SinFlix en modo ${Env.environment.name}');
+  _log('Arrancando CarimarShow en modo ${Env.environment.name}');
   Env.debugSummary.forEach(
     (String key, Object value) => _log('  $key: $value'),
   );
@@ -98,7 +98,7 @@ void _logStartup() {
 }
 
 void _log(String message) {
-  if (kDebugMode) debugPrint('[SinFlix] $message');
+  if (kDebugMode) debugPrint('[CarimarShow] $message');
 }
 
 /// Observador que registra el ciclo de vida de los proveedores en desarrollo.

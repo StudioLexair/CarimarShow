@@ -386,7 +386,7 @@ Decisiones explícitas, no olvidos:
 
 | No incluido | Motivo |
 |---|---|
-| **Reproducción de vídeo** | SinFlix es un catálogo: no aloja ni reproduce contenido. El tráiler se abre en el navegador con `url_launcher` |
+| **Reproducción de vídeo** | CarimarShow es un catálogo: no aloja ni reproduce contenido. El tráiler se abre en el navegador con `url_launcher` |
 | **Internacionalización (ARB)** | Todos los textos están centralizados en `Strings`. Migrar a `flutter gen-l10n` es mecánico cuando se necesite; añadirlo ahora sería especulativo |
 | **`freezed` / `json_serializable`** | Habría que mantener los modelos a mano igualmente y obliga a `build_runner`. Con `Equatable` y mapeadores explícitos hay el mismo control y menos magia |
 | **Tests de las fuentes de red** | Requerirían mocks de Dio y Supabase. Los tests se concentran donde hay lógica real: mapeadores, repositorio local, utilidades y cobertura del árbol de widgets |

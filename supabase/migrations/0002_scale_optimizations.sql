@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════════════
---  SinFlix — 0002 · Optimizaciones de escala
+--  CarimarShow — 0002 · Optimizaciones de escala
 -- ══════════════════════════════════════════════════════════════════════════
 --
 --  Objetivo declarado: sostener ~50.000 usuarios activos sobre el plan FREE

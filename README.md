@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎬 SinFlix
+# 🎬 CarimarShow
 
 **Catálogo de películas y series para todos tus dispositivos.**
 
@@ -14,9 +14,9 @@ Un mismo código para **iOS · Android · Web · Windows · macOS · Linux**.
 [![plataformas](https://img.shields.io/badge/plataformas-6-FFC53D)](#plataformas)
 [![licencia](https://img.shields.io/badge/licencia-MIT-9E9E9E)](LICENSE)
 
-[![ci](https://github.com/StudioLexair/SinFlix/actions/workflows/ci.yml/badge.svg)](https://github.com/StudioLexair/SinFlix/actions/workflows/ci.yml)
-[![release](https://github.com/StudioLexair/SinFlix/actions/workflows/release.yml/badge.svg)](https://github.com/StudioLexair/SinFlix/releases)
-[![web](https://github.com/StudioLexair/SinFlix/actions/workflows/site.yml/badge.svg)](https://studiolexair.github.io/SinFlix/)
+[![ci](https://github.com/StudioLexair/CarimarShow/actions/workflows/ci.yml/badge.svg)](https://github.com/StudioLexair/CarimarShow/actions/workflows/ci.yml)
+[![release](https://github.com/StudioLexair/CarimarShow/actions/workflows/release.yml/badge.svg)](https://github.com/StudioLexair/CarimarShow/releases)
+[![web](https://github.com/StudioLexair/CarimarShow/actions/workflows/site.yml/badge.svg)](https://studiolexair.github.io/CarimarShow/)
 
 </div>
 
@@ -24,7 +24,7 @@ Un mismo código para **iOS · Android · Web · Windows · macOS · Linux**.
 
 ### ⬇️ ¿Solo quieres usarla?
 
-**[studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/)**
+**[studiolexair.github.io/CarimarShow](https://studiolexair.github.io/CarimarShow/)**
 detecta tu dispositivo y te da el instalador correcto: Android, Windows,
 macOS, Linux o directamente el navegador.
 
@@ -34,11 +34,11 @@ macOS, Linux o directamente el navegador.
 
 ## Arranca en 60 segundos, sin configurar nada
 
-SinFlix incluye un **catálogo de demostración** con títulos ficticios, así que funciona
+CarimarShow incluye un **catálogo de demostración** con títulos ficticios, así que funciona
 nada más clonarlo: ni token, ni backend, ni conexión a internet.
 
 ```bash
-git clone https://github.com/StudioLexair/SinFlix.git && cd SinFlix
+git clone https://github.com/StudioLexair/CarimarShow.git && cd CarimarShow
 flutter pub get
 flutter run            # o: flutter run -d chrome / -d linux / -d windows
 ```
@@ -159,7 +159,7 @@ Nada se compila a mano:
 |---|---|
 | push a `main` o un PR | formato → análisis (cero warnings) → 131 tests → build web de humo |
 | un tag `v*.*.*` | se compilan Android, Web, Windows, Linux y macOS (Intel y Apple Silicon), se publica el **Release** con binarios y checksums SHA-256, y se actualiza la web de descarga |
-| cambios en la web o la app | se redepliega **[studiolexair.github.io/SinFlix](https://studiolexair.github.io/SinFlix/)** |
+| cambios en la web o la app | se redepliega **[studiolexair.github.io/CarimarShow](https://studiolexair.github.io/CarimarShow/)** |
 
 El detalle (convención de nombres de artefactos, firmado de Android, por qué
 `release.json` se genera en el runner y no en el navegador) está en
@@ -262,7 +262,7 @@ avalado ni certificado por TMDB**.
 Los títulos del catálogo de demo son **inventados**: no existe ninguna de esas
 películas o series, y ninguna persona del reparto es real.
 
-SinFlix es una aplicación de demostración. **No reproduce ni aloja contenido**:
+CarimarShow es una aplicación de demostración. **No reproduce ni aloja contenido**:
 solo muestra información pública de catálogos.
 
 ## Licencia

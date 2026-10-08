@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "notice": "Catálogo ficticio incluido para el modo demo de SinFlix. Ningún título, persona o dato es real.",
+ "notice": "Catálogo ficticio incluido para el modo demo de CarimarShow. Ningún título, persona o dato es real.",
  "genres_movie": [
   {
    "id": 28,

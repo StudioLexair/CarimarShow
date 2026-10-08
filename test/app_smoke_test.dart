@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sinflix/app.dart';
-import 'package:sinflix/data/repositories/local_auth_repository.dart';
-import 'package:sinflix/data/repositories/local_watchlist_repository.dart';
-import 'package:sinflix/presentation/providers/core_providers.dart';
-import 'package:sinflix/presentation/screens/auth/login_screen.dart';
-import 'package:sinflix/presentation/screens/splash_screen.dart';
-import 'package:sinflix/presentation/shell/main_shell.dart';
+import 'package:carimarshow/app.dart';
+import 'package:carimarshow/data/repositories/local_auth_repository.dart';
+import 'package:carimarshow/data/repositories/local_watchlist_repository.dart';
+import 'package:carimarshow/presentation/providers/core_providers.dart';
+import 'package:carimarshow/presentation/screens/auth/login_screen.dart';
+import 'package:carimarshow/presentation/screens/splash_screen.dart';
+import 'package:carimarshow/presentation/shell/main_shell.dart';
 
 /// Prueba de humo de extremo a extremo.
 ///
@@ -50,7 +50,7 @@ void main() {
         localAuthRepositoryProvider.overrideWithValue(auth),
         localWatchlistRepositoryProvider.overrideWithValue(watchlist),
       ],
-      child: const SinFlixApp(),
+      child: const CarimarShowApp(),
     );
   }
 

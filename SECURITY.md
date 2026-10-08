@@ -7,7 +7,7 @@ seguridad: eso la publica antes de que haya arreglo.
 
 Escríbe en privado a través del formulario de avisos de seguridad de GitHub:
 
-> **https://github.com/StudioLexair/SinFlix/security/advisories/new**
+> **https://github.com/StudioLexair/CarimarShow/security/advisories/new**
 
 o, si prefieres correo, a la dirección del maintainer en el perfil del
 repositorio. Responderemos en un plazo orientativo de **72 horas** con un

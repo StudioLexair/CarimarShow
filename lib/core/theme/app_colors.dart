@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Paleta de SinFlix.
+/// Paleta de CarimarShow.
 ///
 /// Base casi negra para que los pósters sean los protagonistas, con un carmesí
 /// saturado como acento de marca y un ámbar reservado para valoraciones.

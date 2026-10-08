@@ -1,5 +1,5 @@
-name: sinflix
-description: "SinFlix — catálogo multiplataforma de películas y series (iOS, Android, Web, Windows, macOS, Linux)."
+name: carimarshow
+description: "CarimarShow — catálogo multiplataforma de películas y series (iOS, Android, Web, Windows, macOS, Linux)."
 publish_to: "none"
 version: 0.1.0+1
 

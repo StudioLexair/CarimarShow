@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sinflix/data/mappers/json_utils.dart';
+import 'package:carimarshow/data/mappers/json_utils.dart';
 
 /// TMDB es inconsistente: omite campos, manda `null` donde otras APIs mandarían
 /// cadena vacía y mezcla tipos. Estos tests fijan el comportamiento tolerante

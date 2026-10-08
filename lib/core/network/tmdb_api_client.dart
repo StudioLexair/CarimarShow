@@ -311,7 +311,7 @@ class _LogInterceptor extends Interceptor {
   }
 
   static void _emit(String line) {
-    if (kDebugMode) debugPrint('[SinFlix·http] $line');
+    if (kDebugMode) debugPrint('[CarimarShow·http] $line');
   }
 }
 
