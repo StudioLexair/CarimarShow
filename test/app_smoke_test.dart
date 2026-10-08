@@ -6,6 +6,9 @@ import 'package:sinflix/app.dart';
 import 'package:sinflix/data/repositories/local_auth_repository.dart';
 import 'package:sinflix/data/repositories/local_watchlist_repository.dart';
 import 'package:sinflix/presentation/providers/core_providers.dart';
+import 'package:sinflix/presentation/screens/auth/login_screen.dart';
+import 'package:sinflix/presentation/screens/splash_screen.dart';
+import 'package:sinflix/presentation/shell/main_shell.dart';
 
 /// Prueba de humo de extremo a extremo.
 ///
@@ -85,6 +88,27 @@ void main() {
     WidgetTester tester,
   ) async {
     await hastaLogin(tester);
+
+    // ── Diagnóstico temporal ───────────────────────────────────────────
+    // Si el login no aparece, queremos ver QUÉ hay en pantalla en vez de
+    // un "found 0 widgets" a ciegas. Se quitará en cuanto se sepa la causa.
+    if (find.text('Iniciar sesión').evaluate().isEmpty) {
+      final List<String> visibles = find
+          .byType(Text)
+          .evaluate()
+          .map((Element e) => (e.widget as Text).data ?? '')
+          .where((String s) => s.trim().isNotEmpty)
+          .toList();
+      // ignore: avoid_print
+      print(
+        'DIAG splash=${find.byType(SplashScreen).evaluate().length} '
+        'login=${find.byType(LoginScreen).evaluate().length} '
+        'shell=${find.byType(MainShell).evaluate().length}',
+      );
+      // ignore: avoid_print
+      print('DIAG textos=${visibles.take(25).join(' | ')}');
+    }
+    // ── fin diagnóstico ────────────────────────────────────────────────
 
     expect(find.text('Iniciar sesión'), findsWidgets);
     expect(find.text('Contraseña'), findsOneWidget);
