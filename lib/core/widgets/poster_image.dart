@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../theme/app_theme.dart';
+import '../utils/image_cache.dart';
 import '../constants/tmdb_constants.dart';
 import '../theme/app_colors.dart';
 import '../utils/responsive.dart';
@@ -14,7 +15,7 @@ import '../utils/tmdb_images.dart';
 /// degradado determinista derivado del id más el título. Así la interfaz nunca
 /// muestra el típico icono roto: una rejilla de pósters sin imágenes sigue
 /// viéndose como una interfaz terminada.
-class PosterImage extends StatelessWidget {
+class PosterImage extends StatefulWidget {
   const PosterImage({
     required this.imagePath,
     required this.title,
@@ -45,32 +46,51 @@ class PosterImage extends StatelessWidget {
   final bool showTitleFallback;
 
   @override
+  State<PosterImage> createState() => _PosterImageState();
+}
+
+class _PosterImageState extends State<PosterImage> {
+  /// Cambiar esta clave fuerza a `CachedNetworkImage` a reintentar la URL
+  /// después de haberla evacuado de la caché al fallar.
+  int _intento = 0;
+
+  Future<void> _reintentar(String url) async {
+    await AppImages.evict(url);
+    if (mounted) setState(() => _intento++);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String? resolved = TmdbImages.url(imagePath, size);
+    final String? resolved = TmdbImages.url(widget.imagePath, widget.size);
     final Widget fallback = _GradientPlaceholder(
-      title: title,
-      seed: seed,
-      showTitle: showTitleFallback,
+      title: widget.title,
+      seed: widget.seed,
+      showTitle: widget.showTitleFallback,
     );
 
     final Widget image = resolved == null
         ? fallback
         : CachedNetworkImage(
+            key: ValueKey<String>('$resolved#$_intento'),
             imageUrl: resolved,
-            fit: fit,
-            fadeInDuration: const Duration(milliseconds: 180),
-            fadeOutDuration: const Duration(milliseconds: 80),
+            cacheManager: AppImages.cache,
+            fit: widget.fit,
+            fadeInDuration: const Duration(milliseconds: 220),
+            fadeOutDuration: const Duration(milliseconds: 90),
             placeholder: (BuildContext context, String url) =>
-                _ShimmerPlaceholder(borderRadius: borderRadius),
+                _ShimmerPlaceholder(borderRadius: widget.borderRadius),
             errorWidget: (BuildContext context, String url, Object error) =>
-                fallback,
+                _RetryTile(
+                  borderRadius: widget.borderRadius,
+                  onRetry: () => _reintentar(url),
+                ),
           );
 
-    final Widget clipped = borderRadius == null
+    final Widget clipped = widget.borderRadius == null
         ? image
-        : ClipRRect(borderRadius: borderRadius!, child: image);
+        : ClipRRect(borderRadius: widget.borderRadius!, child: image);
 
-    return Semantics(label: title, image: true, child: clipped);
+    return Semantics(label: widget.title, image: true, child: clipped);
   }
 }
 
@@ -140,6 +160,7 @@ class ProfileImage extends StatelessWidget {
     return ClipOval(
       child: CachedNetworkImage(
         imageUrl: resolved,
+        cacheManager: AppImages.cache,
         width: size,
         height: size,
         fit: BoxFit.cover,
@@ -218,6 +239,9 @@ class _GradientPlaceholder extends StatelessWidget {
 }
 
 /// Esqueleto animado con la forma del hueco que va a ocupar la imagen.
+///
+/// Lleva el logotipo muy tenue en el centro: mientras carga, el hueco ya se
+/// reconoce como parte de CarimarShow y no como un rectángulo roto.
 class _ShimmerPlaceholder extends StatelessWidget {
   const _ShimmerPlaceholder({this.borderRadius});
 
@@ -225,13 +249,73 @@ class _ShimmerPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget box = ColoredBox(color: context.pal.surfaceHigh);
+    final Widget box = Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        ColoredBox(color: context.pal.surfaceHigh),
+        Center(
+          child: Opacity(
+            opacity: 0.35,
+            child: Image.asset(
+              'assets/brand/logo.jpeg',
+              width: 34,
+              height: 34,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
+    );
     return Shimmer.fromColors(
       baseColor: context.pal.surfaceHigh,
       highlightColor: context.pal.surfaceHighest,
       child: borderRadius == null
           ? box
           : ClipRRect(borderRadius: borderRadius!, child: box),
+    );
+  }
+}
+
+/// Estado de fallo de una imagen: se ve intencionado y se arregla tocando.
+///
+/// Antes el fallo enseñaba el mismo degradado que «sin imagen», y una red
+/// lenta o un CDN caído se veían como cajas vacías sin explicación. Ahora el
+/// hueco dice qué pasa y ofrece el reintento de un toque: se evacúa la URL de
+/// la caché y se vuelve a pedir.
+class _RetryTile extends StatelessWidget {
+  const _RetryTile({this.borderRadius, this.onRetry});
+
+  final BorderRadius? borderRadius;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: borderRadius,
+      onTap: onRetry,
+      child: ColoredBox(
+        color: context.pal.surfaceHigh,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.cloud_off_rounded,
+                size: 22,
+                color: context.pal.textDisabled,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Toca para reintentar',
+                style: TextStyle(
+                  fontSize: 10.5,
+                  color: context.pal.textDisabled,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -28,6 +28,10 @@ dependencies:
 
   # ── UI ─────────────────────────────────────────────────────────────────
   cached_network_image: ^4.0.4
+
+  # Caché de imágenes a 30 días; ya venía de forma transitiva,
+  # se declara para poder configurar caducidad y tamaño.
+  flutter_cache_manager: any
   shimmer: ^4.0.0
   url_launcher: ^6.3.3
 

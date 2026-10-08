@@ -18,6 +18,7 @@ import '../../providers/watchlist_providers.dart';
 import '../../widgets/demo_mode_banner.dart';
 import '../../widgets/hero_backdrop.dart';
 import '../../widgets/media_carousel.dart';
+import '../../widgets/precache_images.dart';
 import '../../widgets/promo_banner.dart';
 
 /// Portada: héroe rotatorio + carruseles por categoría.
@@ -189,6 +190,19 @@ class _HomeContent extends ConsumerWidget {
           ),
 
         const SliverToBoxAdapter(child: PromoBanner()),
+
+        // Precarga en memoria los pósters y fondos que se van a pintar a
+        // continuación: al volver de otra pestaña ya están decodificados y no
+        // se ven esqueletos de nuevo.
+        SliverToBoxAdapter(
+          child: PrecacheImages(
+            items: <MediaItem>[
+              ...feed.trending,
+              ...feed.popularMovies,
+              ...feed.popularSeries,
+            ],
+          ),
+        ),
 
         SliverToBoxAdapter(
           child: MediaCarousel(

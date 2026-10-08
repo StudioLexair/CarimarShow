@@ -98,7 +98,7 @@ class AppPal extends ThemeExtension<AppPal> {
 }
 
 abstract final class AppTheme {
-  static const double _radius = 14;
+  static const double _radius = 18;
 
   /// Tema oscuro por defecto.
   static ThemeData dark() => _base(Brightness.dark);
