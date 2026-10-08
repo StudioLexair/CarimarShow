@@ -241,7 +241,7 @@ abstract final class AppTheme {
               : const Color(0xFFDCDCE4),
           minimumSize: const Size.fromHeight(52),
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-          shape: const RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
           ),
         ),
@@ -251,14 +251,11 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: pal.textPrimary,
           minimumSize: const Size.fromHeight(52),
-          shape: const RoundedRectangleBorder(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
           ),
           side: BorderSide(color: pal.outline),
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_radius),
-          ),
         ),
       ),
 
