@@ -23,36 +23,13 @@ class SplashScreen extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              width: 96,
-              height: 96,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[
-                    AppColors.crimsonLight,
-                    AppColors.crimsonDark,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(26),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    color: AppColors.crimson.withValues(alpha: 0.35),
-                    blurRadius: 36,
-                    offset: const Offset(0, 12),
-                  ),
-                ],
-              ),
-              child: const Text(
-                'S',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 52,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(26),
+              child: Image.asset(
+                'assets/brand/logo.jpeg',
+                width: 96,
+                height: 96,
+                fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 26),

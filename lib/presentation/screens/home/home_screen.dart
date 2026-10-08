@@ -112,22 +112,13 @@ class _HomeContent extends ConsumerWidget {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Container(
-                width: 28,
-                height: 28,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.crimson,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'S',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/brand/logo.jpeg',
+                  width: 28,
+                  height: 28,
+                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: 9),
