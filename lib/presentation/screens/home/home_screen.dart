@@ -201,8 +201,8 @@ class _HomeContent extends ConsumerWidget {
         SliverToBoxAdapter(
           child: MediaCarousel(
             title: 'Lo mejor de hoy',
-            items: ref.watch(trendingTodayProvider).value ??
-                const <MediaItem>[],
+            items:
+                ref.watch(trendingTodayProvider).value ?? const <MediaItem>[],
             showTypeTag: true,
           ),
         ),
@@ -210,8 +210,7 @@ class _HomeContent extends ConsumerWidget {
         SliverToBoxAdapter(
           child: MediaCarousel(
             title: 'Lo mejor de la semana',
-            items: ref.watch(trendingWeekProvider).value ??
-                const <MediaItem>[],
+            items: ref.watch(trendingWeekProvider).value ?? const <MediaItem>[],
             showTypeTag: true,
           ),
         ),

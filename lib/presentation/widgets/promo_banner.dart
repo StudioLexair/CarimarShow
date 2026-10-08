@@ -38,20 +38,33 @@ class PromoBanner extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Row(
                 children: <Widget>[
-                  const Icon(Icons.campaign_outlined, color: Colors.white, size: 22),
+                  const Icon(
+                    Icons.campaign_outlined,
+                    color: Colors.white,
+                    size: 22,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       promo.text,
-                      style: const TextStyle(color: Colors.white, fontSize: 13.5, height: 1.4),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13.5,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   IconButton(
                     tooltip: 'Ocultar banner',
-                    icon: const Icon(Icons.close, color: Colors.white, size: 18),
-                    onPressed: () =>
-                        ref.read(promoSettingsProvider.notifier).setEnabled(false),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                    onPressed: () => ref
+                        .read(promoSettingsProvider.notifier)
+                        .setEnabled(false),
                   ),
                 ],
               ),

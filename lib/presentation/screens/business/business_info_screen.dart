@@ -66,7 +66,11 @@ class BusinessInfoScreen extends StatelessWidget {
           Text(
             'Catálogo informativo: la app muestra información pública de '
             'películas y series y no aloja ni reproduce contenido.',
-            style: TextStyle(color: AppColors.textDisabled, fontSize: 12.5, height: 1.5),
+            style: TextStyle(
+              color: AppColors.textDisabled,
+              fontSize: 12.5,
+              height: 1.5,
+            ),
           ),
         ],
       ),
@@ -96,12 +100,24 @@ class _Row extends StatelessWidget {
       color: AppColors.surface,
       child: ListTile(
         leading: Icon(icon, color: AppColors.accent),
-        title: Text(title, style: const TextStyle(fontSize: 13, color: AppColors.textDisabled)),
-        subtitle: Text(body, style: const TextStyle(fontSize: 15, color: AppColors.textPrimary)),
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 13, color: AppColors.textDisabled),
+        ),
+        subtitle: Text(
+          body,
+          style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
+        ),
         trailing: onTap == null
             ? null
-            : Text(actionLabel ?? 'Abrir',
-                style: const TextStyle(color: AppColors.accent, fontSize: 13, fontWeight: FontWeight.w600)),
+            : Text(
+                actionLabel ?? 'Abrir',
+                style: const TextStyle(
+                  color: AppColors.accent,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
         onTap: onTap,
       ),
     );

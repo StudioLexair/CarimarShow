@@ -80,12 +80,15 @@ class ProfileScreen extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () async {
-                final int freed =
-                    await ref.read(catalogCacheProvider).clear();
+                final int freed = await ref.read(catalogCacheProvider).clear();
                 ref.invalidate(cacheSizeProvider);
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Caché vaciada: ${_fmtBytes(freed)} liberados')),
+                  SnackBar(
+                    content: Text(
+                      'Caché vaciada: ${_fmtBytes(freed)} liberados',
+                    ),
+                  ),
                 );
               },
               icon: const Icon(Icons.cleaning_services_outlined, size: 18),
@@ -98,9 +101,14 @@ class ProfileScreen extends ConsumerWidget {
           Card(
             color: AppColors.surface,
             child: ListTile(
-              leading: const Icon(Icons.storefront_outlined, color: AppColors.accent),
+              leading: const Icon(
+                Icons.storefront_outlined,
+                color: AppColors.accent,
+              ),
               title: const Text('Datos del negocio'),
-              subtitle: const Text('Dirección, horario y contacto de CarimarShow.'),
+              subtitle: const Text(
+                'Dirección, horario y contacto de CarimarShow.',
+              ),
               trailing: const Icon(Icons.chevron_right_rounded),
               onTap: () => context.push('/negocio'),
             ),
@@ -735,7 +743,6 @@ class _AboutBox extends StatelessWidget {
     );
   }
 }
-
 
 /// Formatea bytes como KB/MB para la sección de almacenamiento.
 String _fmtBytes(int bytes) {

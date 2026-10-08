@@ -18,7 +18,7 @@ import '../errors/app_exception.dart';
 ///  * Extraer de forma uniforme las listas de las respuestas paginadas.
 class TmdbApiClient {
   TmdbApiClient({required this.config, Dio? dio, this.cache})
-      : _dio = dio ?? Dio() {
+    : _dio = dio ?? Dio() {
     _dio
       ..options.baseUrl = Tmdb.baseUrl
       ..options.connectTimeout = Tmdb.timeout
@@ -95,9 +95,10 @@ class TmdbApiClient {
   /// es-ES no sirve para una sesión en en-US.
   String _cacheKey(String path, Map<String, dynamic>? query) {
     final List<MapEntry<String, dynamic>> params =
-        (query?.entries.toList() ?? <MapEntry<String, dynamic>>[])
-          ..sort((MapEntry<String, dynamic> a, MapEntry<String, dynamic> b) =>
-              a.key.compareTo(b.key));
+        (query?.entries.toList() ?? <MapEntry<String, dynamic>>[])..sort(
+          (MapEntry<String, dynamic> a, MapEntry<String, dynamic> b) =>
+              a.key.compareTo(b.key),
+        );
     return '${config.language}|$path|${params.map((MapEntry<String, dynamic> e) => '${e.key}=${e.value}').join('&')}';
   }
 

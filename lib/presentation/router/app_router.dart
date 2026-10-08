@@ -109,12 +109,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: '/negocio',
-      name: 'negocio',
-      builder: (BuildContext context, GoRouterState state) =>
-          const BusinessInfoScreen(),
-    ),
-    GoRoute(
-      path: '/search',
+        name: 'negocio',
+        builder: (BuildContext context, GoRouterState state) =>
+            const BusinessInfoScreen(),
+      ),
+      GoRoute(
+        path: '/search',
         name: 'search',
         builder: (BuildContext context, GoRouterState state) =>
             const SearchScreen(),

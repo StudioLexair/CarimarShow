@@ -19,10 +19,8 @@ class PromoSettings extends Equatable {
   final bool enabled;
   final String text;
 
-  PromoSettings copyWith({bool? enabled, String? text}) => PromoSettings(
-        enabled: enabled ?? this.enabled,
-        text: text ?? this.text,
-      );
+  PromoSettings copyWith({bool? enabled, String? text}) =>
+      PromoSettings(enabled: enabled ?? this.enabled, text: text ?? this.text);
 
   @override
   List<Object?> get props => <Object?>[enabled, text];
@@ -53,7 +51,7 @@ class PromoSettingsController extends Notifier<PromoSettings> {
 }
 
 final NotifierProvider<PromoSettingsController, PromoSettings>
-    promoSettingsProvider =
+promoSettingsProvider =
     NotifierProvider<PromoSettingsController, PromoSettings>(
       PromoSettingsController.new,
     );

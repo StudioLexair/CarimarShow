@@ -39,7 +39,10 @@ class CatalogCache {
       if (bytes > maxBytes) return; // una sola respuesta no cabe: se descarta
       await _prefs.setString(_entryPrefix + key, payload);
       final Map<String, _Entry> index = _readIndex();
-      index[key] = _Entry(bytes: bytes, at: DateTime.now().millisecondsSinceEpoch);
+      index[key] = _Entry(
+        bytes: bytes,
+        at: DateTime.now().millisecondsSinceEpoch,
+      );
       await _evict(index);
       await _writeIndex(index);
     } catch (_) {
@@ -69,7 +72,8 @@ class CatalogCache {
   }
 
   /// Bytes ocupados ahora mismo, para mostrarlos en Configuración.
-  int sizeBytes() => _readIndex().values.fold<int>(0, (int a, _Entry e) => a + e.bytes);
+  int sizeBytes() =>
+      _readIndex().values.fold<int>(0, (int a, _Entry e) => a + e.bytes);
 
   /// Número de respuestas guardadas.
   int entryCount() => _readIndex().length;
@@ -78,7 +82,10 @@ class CatalogCache {
   /// «liberar espacio» de Configuración.
   Future<int> clear() async {
     final Map<String, _Entry> index = _readIndex();
-    final int freed = index.values.fold<int>(0, (int a, _Entry e) => a + e.bytes);
+    final int freed = index.values.fold<int>(
+      0,
+      (int a, _Entry e) => a + e.bytes,
+    );
     for (final String key in index.keys) {
       await _prefs.remove(_entryPrefix + key);
     }
@@ -95,7 +102,8 @@ class CatalogCache {
       final dynamic decoded = jsonDecode(raw);
       if (decoded is! Map<String, dynamic>) return <String, _Entry>{};
       return decoded.map<String, _Entry>(
-        (String k, dynamic v) => MapEntry<String, _Entry>(k, _Entry.fromJson(v)),
+        (String k, dynamic v) =>
+            MapEntry<String, _Entry>(k, _Entry.fromJson(v)),
       );
     } catch (_) {
       return <String, _Entry>{};
@@ -103,11 +111,13 @@ class CatalogCache {
   }
 
   Future<void> _writeIndex(Map<String, _Entry> index) => _prefs.setString(
-        _indexKey,
-        jsonEncode(index.map<String, dynamic>(
-          (String k, _Entry e) => MapEntry<String, dynamic>(k, e.toJson()),
-        )),
-      );
+    _indexKey,
+    jsonEncode(
+      index.map<String, dynamic>(
+        (String k, _Entry e) => MapEntry<String, dynamic>(k, e.toJson()),
+      ),
+    ),
+  );
 
   /// Evoluciona las entradas más antiguas hasta quedar por debajo del límite.
   Future<void> _evict(Map<String, _Entry> index) async {

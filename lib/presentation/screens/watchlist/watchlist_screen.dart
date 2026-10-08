@@ -552,7 +552,6 @@ class _WatchlistSkeleton extends StatelessWidget {
   }
 }
 
-
 /// Botón de la barra que comparte la lista como texto plano.
 ///
 /// Flujo que describió el cliente: el vendedor prepara la selección y se la
@@ -621,9 +620,11 @@ class _ShareListButton extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(compartido
-            ? 'Lista compartida'
-            : 'Sin sheet nativo aquí: lista copiada al portapapeles'),
+        content: Text(
+          compartido
+              ? 'Lista compartida'
+              : 'Sin sheet nativo aquí: lista copiada al portapapeles',
+        ),
       ),
     );
   }

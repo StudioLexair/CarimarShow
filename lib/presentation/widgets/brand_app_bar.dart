@@ -12,7 +12,12 @@ import '../providers/auth_providers.dart';
 /// Se comparte entre las pestañas del shell para no repetir el mismo código en
 /// Inicio, Películas, Series y Mi lista.
 class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
-  const BrandAppBar({this.showSearch = true, this.bottom, this.actions, super.key});
+  const BrandAppBar({
+    this.showSearch = true,
+    this.bottom,
+    this.actions,
+    super.key,
+  });
 
   final bool showSearch;
 
