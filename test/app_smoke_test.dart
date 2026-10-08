@@ -106,10 +106,10 @@ void main() {
 
     await tester.tap(find.text('Continuar (modo local)'));
     await settleUntil(tester, find.text('Mi lista'));
-    // Unos frames más para que el shell termine de montar sus pestañas.
-    for (int i = 0; i < 4; i++) {
-      await tester.pump(const Duration(milliseconds: 250));
-    }
+    // El aviso de modo demo y el catálogo se resuelven con I/O real
+    // (lectura del asset), así que se esperan con settleUntil, que alterna
+    // async real y reloj ficticio, en vez de pumps a pelo.
+    await settleUntil(tester, find.textContaining('Modo demo'));
 
     // La navegación inferior del shell está presente.
     expect(find.text('Inicio'), findsWidgets);
@@ -139,11 +139,16 @@ void main() {
       'Mareas',
     ];
     bool apareceDemo = false;
-    for (int i = 0; i < 80 && !apareceDemo; i++) {
+    for (int i = 0; i < 40 && !apareceDemo; i++) {
       apareceDemo = titulosDemo.any(
         (String t) => find.textContaining(t).evaluate().isNotEmpty,
       );
-      if (!apareceDemo) await tester.pump(const Duration(milliseconds: 100));
+      if (!apareceDemo) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+      }
     }
 
     // Al menos uno de los títulos ficticios incluidos en demo_catalog.json
