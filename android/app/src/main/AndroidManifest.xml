@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Imprescindible en el manifiesto de RELEASE: el de debug ya lo trae,
+         pero sin esto el APK publicado sale sin permiso de red y todas las
+         llamadas (catálogo, login, registro) fallan con «sin conexión». -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:label="CarimarShow"
         android:name="${applicationName}"

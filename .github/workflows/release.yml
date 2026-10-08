@@ -329,11 +329,45 @@ jobs:
           flutter build windows --release \
             --build-name="$VERSION" --build-number="$BUILD_NUMBER" "${D[@]}"
 
+      # Los Flutter de escritorio para Windows se enlazan contra el CRT
+      # dinámico de MSVC. Si el equipo no tiene el redistribuible de Visual
+      # C++, al abrir el .exe salta «no se encontró MSVCP140.dll». Se incluye
+      # el instalador oficial dentro del ZIP para que nadie se quede colgado.
+      - name: Descargar el redistribuible de Visual C++
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force redist | Out-Null
+          Invoke-WebRequest -Uri 'https://aka.ms/vc/vc_redist.x64.exe' `
+                            -OutFile redist\vc_redist.x64.exe
+          if (-not (Test-Path redist\vc_redist.x64.exe)) {
+            echo "::warning::No se pudo bajar vc_redist.x64.exe; el ZIP saldra sin el."
+          } else {
+            echo ("vc_redist.x64.exe: " + (Get-Item redist\vc_redist.x64.exe).Length + " bytes")
+          }
+
       - name: Empaquetar
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path build\windows\x64\runner\Release\* `
+          $stage = "build\windows\x64\runner\Release"
+          if (Test-Path redist\vc_redist.x64.exe) {
+            Copy-Item redist\vc_redist.x64.exe "$stage\"
+          }
+          Set-Content -Path "$stage\LEEME.txt" -Encoding UTF8 -Value @(
+            "CarimarShow $env:VERSION para Windows 10/11 (64 bits)",
+            "",
+            "1. Si al abrir carimarshow.exe Windows dice que falta MSVCP140.dll",
+            "   (o VCRUNTIME140.dll), ejecuta primero vc_redist.x64.exe, que va",
+            "   en esta misma carpeta, y vuelve a intentarlo.",
+            "2. Descomprime la carpeta entera donde quieras y ejecuta",
+            "   carimarshow.exe. No necesita instalador ni administrador.",
+            "",
+            "Si SmartScreen avisa: Mas informacion > Ejecutar de todos modos.",
+            "Sale porque el binario no lleva certificado de codigo de Windows,",
+            "no porque el archivo sea peligroso: puedes verificarlo con el",
+            "SHA256SUMS.txt del release."
+          )
+          Compress-Archive -Path "$stage\*" `
                            -DestinationPath "dist\carimarshow-$env:VERSION-windows-x64.zip"
           Get-ChildItem dist | Format-Table Name, Length
 

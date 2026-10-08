@@ -102,7 +102,7 @@ void main() {
 
     // Sin Supabase no se ofrece registro, solo la sesión local.
     expect(find.text('Crear cuenta'), findsNothing);
-    expect(find.text('Continuar (modo local)'), findsOneWidget);
+    expect(find.text('Entrar como invitado'), findsOneWidget);
   });
 
   testWidgets('la sesión local lleva a la portada con el catálogo de demo', (
@@ -110,7 +110,16 @@ void main() {
   ) async {
     await hastaLogin(tester);
 
-    await tester.tap(find.text('Continuar (modo local)'));
+    await tester.tap(find.text('Entrar como invitado'));
+    // El modo invitado pide confirmación explicando que los datos quedan
+    // solo en el dispositivo: se confirma el diálogo antes de seguir.
+    await settleUntil(tester, find.byType(AlertDialog));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Entrar como invitado'),
+      ),
+    );
     await settleUntil(tester, find.text('Mi lista'));
     // El aviso de modo demo y el catálogo se resuelven con I/O real
     // (lectura del asset), así que se esperan con settleUntil, que alterna

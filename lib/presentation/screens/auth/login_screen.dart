@@ -54,6 +54,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     await ref.read(authControllerProvider.notifier).continueAsGuest();
   }
 
+  /// Confirmación del modo invitado, con la letra pequeña clara.
+  ///
+  /// El modo invitado ya existía, pero entraba directo sin explicar la
+  /// consecuencia: sin cuenta no hay servidor, así que la lista vive solo en
+  /// el dispositivo y no se puede recuperar al cambiar de teléfono. Mejor
+  /// decirlo antes de entrar que después de perder los datos.
+  Future<void> _confirmGuest(BuildContext context) async {
+    final bool? go = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Entrar como invitado'),
+        content: const Text(
+          'Puedes usar la aplicación sin crear una cuenta, pero tu lista, '
+          'tu progreso y tus preferencias se guardarán SOLO en este '
+          'dispositivo: no se suben a ningún servidor.\n\n'
+          'Si desinstalas la aplicación, restableces el teléfono o lo '
+          'pierdes, NO podrás recuperar esos datos. Con una cuenta creada, '
+          'todo se sincroniza y lo recuperas en cualquier dispositivo.',
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Entrar como invitado'),
+          ),
+        ],
+      ),
+    );
+    if (go == true) await _guest();
+  }
+
   Future<void> _resetPassword() async {
     final String email = _email.text.trim();
     if (email.isEmpty) {
@@ -190,13 +224,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const AuthDivider(),
 
                     OutlinedButton.icon(
-                      onPressed: auth.isSubmitting ? null : _guest,
+                      onPressed: auth.isSubmitting
+                          ? null
+                          : () => _confirmGuest(context),
                       icon: const Icon(Icons.person_outline_rounded, size: 20),
-                      label: Text(
-                        accountsEnabled
-                            ? Strings.continueAsGuest
-                            : 'Continuar (modo local)',
+                      label: const Text('Entrar como invitado'),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      accountsEnabled
+                          ? 'Como invitado todo se guarda solo en este dispositivo.'
+                          : 'Sin servidor configurado: todo se guarda en este dispositivo.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.pal.textDisabled,
                       ),
+                      textAlign: TextAlign.center,
                     ),
 
                     if (!accountsEnabled) ...<Widget>[
