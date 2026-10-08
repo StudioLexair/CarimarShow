@@ -51,16 +51,40 @@ void main() {
     );
   }
 
+  /// Bombea hasta que [finder] encuentra algo, o hasta agotar los intentos.
+  ///
+  /// Antes este test usaba duraciones fijas (`pump(100ms)`, `pump(400ms)`).
+  /// Eso lo hacía frágil entre versiones de Flutter: la redirección del
+  /// router puede resolverse un frame más tarde de una versión a otra y el
+  /// test fallaba sin que hubiera ningún bug real. Esperar activamente al
+  /// finder elimina esa dependencia del timing sin perder determinismo: el
+  /// reloj aquí es ficticio y avanza solo lo que nosotros decidimos.
+  ///
+  /// No se usa `pumpAndSettle` porque la portada tiene animaciones continuas
+  /// (avance automático del héroe) y no asentaría nunca.
+  Future<void> settleUntil(
+    WidgetTester tester,
+    Finder finder, {
+    int intentos = 80,
+  }) async {
+    for (int i = 0; i < intentos; i++) {
+      if (finder.evaluate().isNotEmpty) return;
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+  }
+
+  /// Lleva la app desde el arranque hasta la pantalla de acceso.
+  Future<void> hastaLogin(WidgetTester tester) async {
+    await tester.pumpWidget(await buildApp());
+    // Primer frame: la sesión aún se está resolviendo, así que toca el splash.
+    await tester.pump();
+    await settleUntil(tester, find.text('Iniciar sesión'));
+  }
+
   testWidgets('sin sesión, el router muestra la pantalla de acceso', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(await buildApp());
-
-    // Primer frame: la sesión aún se está resolviendo, así que toca el splash.
-    await tester.pump();
-    // El stream de autenticación emite `null` y el router redirige a /login.
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 400));
+    await hastaLogin(tester);
 
     expect(find.text('Iniciar sesión'), findsWidgets);
     expect(find.text('Contraseña'), findsOneWidget);
@@ -73,17 +97,12 @@ void main() {
   testWidgets('la sesión local lleva a la portada con el catálogo de demo', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(await buildApp());
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 400));
+    await hastaLogin(tester);
 
     await tester.tap(find.text('Continuar (modo local)'));
-
-    // Se bombea con duraciones explícitas en vez de `pumpAndSettle`: la
-    // portada tiene animaciones continuas (avance automático del héroe) y
-    // `pumpAndSettle` no terminaría nunca.
-    for (int i = 0; i < 8; i++) {
+    await settleUntil(tester, find.text('Mi lista'));
+    // Unos frames más para que el shell termine de montar sus pestañas.
+    for (int i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
 
@@ -100,27 +119,30 @@ void main() {
   testWidgets('el catálogo de demo carga títulos desde los assets', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(await buildApp());
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 400));
+    await hastaLogin(tester);
 
     await tester.tap(find.text('Continuar (modo local)'));
-    for (int i = 0; i < 10; i++) {
-      await tester.pump(const Duration(milliseconds: 250));
-    }
+    await settleUntil(tester, find.text('Mi lista'));
 
-    // Al menos uno de los títulos ficticios incluidos en demo_catalog.json
-    // debe haber llegado a la pantalla: prueba de que el asset existe, se
-    // parsea y se mapea a entidades sin errores.
-    final bool apareceDemo = <String>[
+    // El catálogo viene de un asset leído de forma asíncrona: se espera
+    // activamente a que alguno de los títulos ficticios llegue a pantalla.
+    const List<String> titulosDemo = <String>[
       'Órbita roja',
       'El último faro',
       'Ceniza de neón',
       'Estación Polar',
       'Mareas',
-    ].any((String titulo) => find.textContaining(titulo).evaluate().isNotEmpty);
+    ];
+    bool apareceDemo = false;
+    for (int i = 0; i < 80 && !apareceDemo; i++) {
+      apareceDemo = titulosDemo
+          .any((String t) => find.textContaining(t).evaluate().isNotEmpty);
+      if (!apareceDemo) await tester.pump(const Duration(milliseconds: 100));
+    }
 
+    // Al menos uno de los títulos ficticios incluidos en demo_catalog.json
+    // debe haber llegado a la pantalla: prueba de que el asset existe, se
+    // parsea y se mapea a entidades sin errores.
     expect(
       apareceDemo,
       isTrue,
