@@ -39,7 +39,7 @@ void main() {
 
     return ProviderScope(
       retry: (int retryCount, Object error) => null,
-      overrides: <Override>[
+      overrides: [
         sharedPreferencesProvider.overrideWithValue(prefs),
         supabaseClientProvider.overrideWithValue(null),
         localAuthRepositoryProvider.overrideWithValue(auth),
@@ -55,7 +55,7 @@ void main() {
           ),
         ),
       ],
-      child: const SinFlixApp(),
+      child: const CarimarShowApp(),
     );
   }
 
