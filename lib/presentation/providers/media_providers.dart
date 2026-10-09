@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/query_corrector.dart';
 import '../../domain/entities/genre.dart';
 import '../../domain/entities/media_details.dart';
 import '../../domain/entities/media_id.dart';
@@ -511,6 +512,18 @@ final NotifierProvider<SearchTypeNotifier, MediaType?> searchTypeProvider =
 /// Longitud mínima para considerar que hay una búsqueda intencionada.
 const int kMinSearchLength = 2;
 
+/// «Quizás quisiste decir»: corrección de erratas contra el léxico local.
+final Provider<String?> searchSuggestionProvider = Provider<String?>((Ref ref) {
+  final String query = ref.watch(searchQueryProvider).trim();
+  if (query.length < kMinSearchLength) return null;
+  final AsyncValue<MediaPage> results = ref.watch(searchResultsProvider);
+  final int n = results.value?.items.length ?? 0;
+  if (n > 2) return null; // con resultados decentes no se mete nadie
+  final String? sugerencia = QueryCorrector.suggest(query);
+  if (sugerencia == null) return null;
+  return normalizeQuery(sugerencia) == normalizeQuery(query) ? null : sugerencia;
+});
+
 final FutureProvider<MediaPage> searchResultsProvider =
     FutureProvider<MediaPage>((Ref ref) async {
       final String query = ref.watch(searchQueryProvider).trim();
@@ -518,7 +531,10 @@ final FutureProvider<MediaPage> searchResultsProvider =
 
       if (query.length < kMinSearchLength) return const MediaPage.empty();
 
-      return ref.watch(mediaRepositoryProvider).search(query, type: type);
+      final MediaPage page =
+          await ref.watch(mediaRepositoryProvider).search(query, type: type);
+      LexiconStore.instance.addMany(page.items.map((MediaItem i) => i.title));
+      return page;
     });
 
 /// Sugerencias cuando el campo está vacío: tendencias del momento.

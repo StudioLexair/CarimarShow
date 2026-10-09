@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import '../../core/cache/catalog_cache.dart';
+import '../../core/utils/query_corrector.dart';
 import '../../core/config/app_config.dart';
 import '../../data/repositories/local_auth_repository.dart';
 import '../../data/repositories/local_watchlist_repository.dart';
@@ -76,7 +77,12 @@ final Provider<bool> demoModeProvider = Provider<bool>(
 /// Catálogo: TMDB en directo si hay credenciales, demo local si no.
 /// Caché en disco de respuestas del catálogo (offline + botón «liberar espacio»).
 final Provider<CatalogCache> catalogCacheProvider = Provider<CatalogCache>(
-  (Ref ref) => CatalogCache(ref.watch(sharedPreferencesProvider)),
+  (Ref ref) {
+    final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
+    // El léxico del corrector vive en las mismas preferencias.
+    LexiconStore.instance.bind(prefs);
+    return CatalogCache(prefs);
+  },
 );
 
 final Provider<MediaRepository> mediaRepositoryProvider =

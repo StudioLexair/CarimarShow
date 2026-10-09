@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -22,8 +23,16 @@ abstract final class AppImages {
     ),
   );
 
-  static ImageProvider provider(String url) =>
-      CachedNetworkImageProvider(url, cacheManager: cache);
+  /// En web `flutter_cache_manager` no existe (necesita sistema de ficheros),
+  /// así que allí se usa el proveedor por defecto, que deja la caché en manos
+  /// del navegador. Pasar el manager propio en web hacía fallar TODAS las
+  /// imágenes: de ahí los «toca para reintentar» generalizados.
+  static ImageProvider provider(String url) => kIsWeb
+      ? CachedNetworkImageProvider(url)
+      : CachedNetworkImageProvider(url, cacheManager: cache);
+
+  /// El manager de disco, o `null` en web (el widget usa su caché por defecto).
+  static BaseCacheManager? get manager => kIsWeb ? null : cache;
 
   /// Olvida una URL concreta (la usa el botón «reintentar»).
   static Future<void> evict(String url) => cache.removeFile(url);

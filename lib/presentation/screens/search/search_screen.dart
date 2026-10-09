@@ -28,6 +28,9 @@ class SearchScreen extends ConsumerStatefulWidget {
 }
 
 class _SearchScreenState extends ConsumerState<SearchScreen> {
+  /// Consulta que ya fue autocorregida, para no entrar en bucle.
+  String? _corregidaDe;
+
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -39,6 +42,25 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   void initState() {
     super.initState();
     _controller.text = ref.read(searchQueryProvider);
+
+    // Autocorrección de erratas: si una búsqueda se queda vacía y el léxico
+    // local conoce un título parecido, se reescribe la consulta y se relanza,
+    // avisando con un snack. «resindente evil» acaba buscando Resident Evil.
+    ref.listen<String?>(searchSuggestionProvider, (String? prev, String? next) {
+      if (next == null) return;
+      final String actual = ref.read(searchQueryProvider);
+      final bool vacia =
+          ref.read(searchResultsProvider).value?.items.isEmpty ?? false;
+      if (!vacia || _corregidaDe == actual) return;
+      _corregidaDe = actual;
+      _controller.text = next;
+      ref.read(searchQueryProvider.notifier).set(next);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(content: Text('¿Quisiste decir «$next»? Buscando eso.')),
+        );
+    });
     // El foco se pide tras el primer frame: hacerlo en initState compite con la
     // transición de ruta y en iOS el teclado puede no aparecer.
     WidgetsBinding.instance.addPostFrameCallback((_) {

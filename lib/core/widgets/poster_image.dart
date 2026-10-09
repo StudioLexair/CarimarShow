@@ -73,7 +73,7 @@ class _PosterImageState extends State<PosterImage> {
         : CachedNetworkImage(
             key: ValueKey<String>('$resolved#$_intento'),
             imageUrl: resolved,
-            cacheManager: AppImages.cache,
+            cacheManager: AppImages.manager,
             fit: widget.fit,
             fadeInDuration: const Duration(milliseconds: 220),
             fadeOutDuration: const Duration(milliseconds: 90),
@@ -116,7 +116,7 @@ class BackdropImage extends StatelessWidget {
       title: title,
       seed: seed,
       fit: fit,
-      size: TmdbImageSize.backdropLarge,
+      size: TmdbImageSize.backdropMedium,
       showTitleFallback: false,
     );
   }
@@ -160,7 +160,7 @@ class ProfileImage extends StatelessWidget {
     return ClipOval(
       child: CachedNetworkImage(
         imageUrl: resolved,
-        cacheManager: AppImages.cache,
+        cacheManager: AppImages.manager,
         width: size,
         height: size,
         fit: BoxFit.cover,
