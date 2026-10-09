@@ -5,12 +5,32 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Normaliza texto para comparar: minúsculas, sin acentos, sin signos.
 const Map<String, String> _sinAccent = <String, String>{
-  'á': 'a', 'à': 'a', 'ä': 'a', 'â': 'a', 'ã': 'a',
-  'é': 'e', 'è': 'e', 'ë': 'e', 'ê': 'e',
-  'í': 'i', 'ì': 'i', 'ï': 'i', 'î': 'i',
-  'ó': 'o', 'ò': 'o', 'ö': 'o', 'ô': 'o', 'õ': 'o',
-  'ú': 'u', 'ù': 'u', 'ü': 'u', 'û': 'u',
-  'ñ': 'n', 'ç': 'c', 'ý': 'y', 'ÿ': 'y',
+  'á': 'a',
+  'à': 'a',
+  'ä': 'a',
+  'â': 'a',
+  'ã': 'a',
+  'é': 'e',
+  'è': 'e',
+  'ë': 'e',
+  'ê': 'e',
+  'í': 'i',
+  'ì': 'i',
+  'ï': 'i',
+  'î': 'i',
+  'ó': 'o',
+  'ò': 'o',
+  'ö': 'o',
+  'ô': 'o',
+  'õ': 'o',
+  'ú': 'u',
+  'ù': 'u',
+  'ü': 'u',
+  'û': 'u',
+  'ñ': 'n',
+  'ç': 'c',
+  'ý': 'y',
+  'ÿ': 'y',
 };
 
 String normalizeQuery(String raw) {
@@ -37,12 +57,17 @@ int _levenshtein(String a, String b, int max) {
     var best = i;
     for (var j = 1; j <= b.length; j++) {
       final cost = a.codeUnitAt(i - 1) == b.codeUnitAt(j - 1) ? 0 : 1;
-      curr[j] = <int>[prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost]
-          .reduce((int x, int y) => x < y ? x : y);
+      curr[j] = <int>[
+        prev[j] + 1,
+        curr[j - 1] + 1,
+        prev[j - 1] + cost,
+      ].reduce((int x, int y) => x < y ? x : y);
       if (curr[j] < best) best = curr[j];
     }
     if (best > max) return max + 1;
-    final t = prev; prev = curr; curr = t;
+    final t = prev;
+    prev = curr;
+    curr = t;
   }
   return prev[b.length];
 }
@@ -94,8 +119,9 @@ class LexiconStore {
     // Poda: se queda con las entradas más recientes.
     if (_entries.length > _max) {
       // Map conserva el orden de inserción: caen las más antiguas.
-      final List<String> sobrantes =
-          _entries.keys.take(_entries.length - _max).toList();
+      final List<String> sobrantes = _entries.keys
+          .take(_entries.length - _max)
+          .toList();
       for (final String k in sobrantes) {
         _entries.remove(k);
       }
@@ -124,7 +150,8 @@ abstract final class QueryCorrector {
     final String q = normalizeQuery(query);
     if (q.length < 4) return null;
     final Map<String, String> entries = LexiconStore.instance._entries;
-    if (entries.containsKey(q)) return null; // existe tal cual: nada que corregir
+    if (entries.containsKey(q))
+      return null; // existe tal cual: nada que corregir
 
     final int max = q.length <= 6 ? 1 : (q.length <= 11 ? 2 : 3);
     String? best;

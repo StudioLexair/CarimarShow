@@ -521,7 +521,9 @@ final Provider<String?> searchSuggestionProvider = Provider<String?>((Ref ref) {
   if (n > 2) return null; // con resultados decentes no se mete nadie
   final String? sugerencia = QueryCorrector.suggest(query);
   if (sugerencia == null) return null;
-  return normalizeQuery(sugerencia) == normalizeQuery(query) ? null : sugerencia;
+  return normalizeQuery(sugerencia) == normalizeQuery(query)
+      ? null
+      : sugerencia;
 });
 
 final FutureProvider<MediaPage> searchResultsProvider =
@@ -531,8 +533,9 @@ final FutureProvider<MediaPage> searchResultsProvider =
 
       if (query.length < kMinSearchLength) return const MediaPage.empty();
 
-      final MediaPage page =
-          await ref.watch(mediaRepositoryProvider).search(query, type: type);
+      final MediaPage page = await ref
+          .watch(mediaRepositoryProvider)
+          .search(query, type: type);
       LexiconStore.instance.addMany(page.items.map((MediaItem i) => i.title));
       return page;
     });

@@ -76,14 +76,14 @@ final Provider<bool> demoModeProvider = Provider<bool>(
 
 /// Catálogo: TMDB en directo si hay credenciales, demo local si no.
 /// Caché en disco de respuestas del catálogo (offline + botón «liberar espacio»).
-final Provider<CatalogCache> catalogCacheProvider = Provider<CatalogCache>(
-  (Ref ref) {
-    final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
-    // El léxico del corrector vive en las mismas preferencias.
-    LexiconStore.instance.bind(prefs);
-    return CatalogCache(prefs);
-  },
-);
+final Provider<CatalogCache> catalogCacheProvider = Provider<CatalogCache>((
+  Ref ref,
+) {
+  final SharedPreferences prefs = ref.watch(sharedPreferencesProvider);
+  // El léxico del corrector vive en las mismas preferencias.
+  LexiconStore.instance.bind(prefs);
+  return CatalogCache(prefs);
+});
 
 final Provider<MediaRepository> mediaRepositoryProvider =
     Provider<MediaRepository>((Ref ref) {
