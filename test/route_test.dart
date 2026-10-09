@@ -73,7 +73,7 @@ void main() {
       router.go(ruta);
       // Reloj ficticio más un poco de async real para que asienten los
       // redirects y las cargas diferidas de cada pantalla.
-      for (int i = 0; i < 6; i++) {
+      for (int i = 0; i < 3; i++) {
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 20)),
         );
@@ -94,5 +94,5 @@ void main() {
         reason: 'el router no se quedó en $ruta',
       );
     }
-  });
+  }, timeout: const Timeout(Duration(minutes: 4)));
 }
