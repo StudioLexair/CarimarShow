@@ -56,6 +56,11 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
       ),
       actions: <Widget>[
         ...?actions,
+        IconButton(
+          tooltip: 'Configuración',
+          icon: const Icon(Icons.settings_outlined),
+          onPressed: () => context.go('/profile'),
+        ),
         if (showSearch)
           IconButton(
             tooltip: 'Buscar',
@@ -78,7 +83,7 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-            onPressed: () => context.push('/profile'),
+            onPressed: () => context.go('/profile'),
           ),
         ),
       ],
