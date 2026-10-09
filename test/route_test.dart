@@ -68,11 +68,10 @@ void main() {
     final GoRouter router = ProviderScope.containerOf(
       tester.element(find.byType(CarimarShowApp)),
     ).read(routerProvider);
-    ).read(routerProvider);
 
     for (final String ruta in rutas) {
       router.go(ruta);
-      // Reloj ficticio + un poco de async real para que asienten los
+      // Reloj ficticio más un poco de async real para que asienten los
       // redirects y las cargas diferidas de cada pantalla.
       for (int i = 0; i < 6; i++) {
         await tester.runAsync(
@@ -80,13 +79,17 @@ void main() {
         );
         await tester.pump(const Duration(milliseconds: 120));
       }
+
       expect(
         tester.takeException(),
         isNull,
         reason: 'la ruta $ruta lanzó una excepción al construir',
       );
+
+      final String ubicacion =
+          router.routerDelegate.currentConfiguration.last.matchedLocation;
       expect(
-        router.routerDelegate.currentConfiguration.last.matchedLocation,
+        ubicacion,
         ruta.startsWith('/title') ? startsWith('/title') : ruta,
         reason: 'el router no se quedó en $ruta',
       );
