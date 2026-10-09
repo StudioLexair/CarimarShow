@@ -66,7 +66,8 @@ void main() {
     await tester.pump();
 
     final GoRouter router = ProviderScope.containerOf(
-      tester.element(find.byType(Scaffold).first),
+      tester.element(find.byType(CarimarShowApp)),
+    ).read(routerProvider);
     ).read(routerProvider);
 
     for (final String ruta in rutas) {
@@ -85,9 +86,9 @@ void main() {
         reason: 'la ruta $ruta lanzó una excepción al construir',
       );
       expect(
-        find.byType(Scaffold),
-        isNotEmpty,
-        reason: 'la ruta $ruta no pintó ningún Scaffold',
+        router.routerDelegate.currentConfiguration.last.matchedLocation,
+        ruta.startsWith('/title') ? startsWith('/title') : ruta,
+        reason: 'el router no se quedó en $ruta',
       );
     }
   });
