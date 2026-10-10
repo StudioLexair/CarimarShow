@@ -19,6 +19,7 @@ import '../../../domain/entities/season.dart';
 import '../../../domain/entities/watchlist_item.dart';
 import '../../providers/media_providers.dart';
 import '../../providers/watchlist_providers.dart';
+import '../player/player_screen.dart';
 import '../../widgets/cast_row.dart';
 import '../../widgets/media_carousel.dart';
 import '../../widgets/rating_badge.dart';
@@ -502,6 +503,19 @@ class _ActionBar extends ConsumerWidget {
 
         WatchlistToggle.labeled(mediaId: mediaId, media: details.item),
 
+        const SizedBox(width: 10),
+
+        // Reproductor integrado. Mientras el negocio no aporte sus propias
+        // fuentes autorizadas (fase 2), se abre con la pieza de muestra CC:
+        // el reproductor, los controles y la ruta ya quedan reales.
+        FilledButton.icon(
+          onPressed: () => context.push(
+            '/player',
+            extra: PlayerArgs.sample(item.displayTitle),
+          ),
+          icon: const Icon(Icons.play_arrow_rounded),
+          label: const Text('Reproducir'),
+        ),
         const SizedBox(width: 10),
 
         // Control de progreso: solo si el título ya está guardado, porque sin

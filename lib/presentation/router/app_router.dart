@@ -9,6 +9,7 @@ import '../../domain/entities/media_type.dart';
 import '../providers/auth_providers.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/business/business_info_screen.dart';
+import '../screens/player/player_screen.dart';
 import '../screens/settings/settings_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/detail/media_detail_screen.dart';
@@ -107,6 +108,12 @@ final Provider<GoRouter> routerProvider = Provider<GoRouter>((Ref ref) {
         name: 'register',
         builder: (BuildContext context, GoRouterState state) =>
             const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/player',
+        name: 'player',
+        builder: (BuildContext context, GoRouterState state) =>
+            PlayerScreen(args: state.extra! as PlayerArgs),
       ),
       GoRoute(
         path: '/ajustes',

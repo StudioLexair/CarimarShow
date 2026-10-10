@@ -40,6 +40,9 @@ dependencies:
   # el proyecto no usa nada específico de una versión concreta.
   share_plus: any
 
+  # Reproductor de vídeo nativo/web para el contenido autorizado.
+  video_player: any
+
   # ── Utilidades ─────────────────────────────────────────────────────────
   intl: ^0.20.3
   equatable: ^3.0.0

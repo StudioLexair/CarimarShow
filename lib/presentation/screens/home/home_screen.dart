@@ -20,6 +20,7 @@ import '../../widgets/hero_backdrop.dart';
 import '../../widgets/media_carousel.dart';
 import '../../widgets/precache_images.dart';
 import '../../widgets/promo_banner.dart';
+import '../../widgets/top10_rail.dart';
 
 /// Portada: héroe rotatorio + carruseles por categoría.
 ///
@@ -220,6 +221,8 @@ class _HomeContent extends ConsumerWidget {
             showTypeTag: true,
           ),
         ),
+
+        SliverToBoxAdapter(child: Top10Rail(items: feed.trending)),
 
         SliverToBoxAdapter(
           child: MediaCarousel(
