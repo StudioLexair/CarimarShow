@@ -28,7 +28,7 @@ abstract final class AppImages {
   /// del navegador. Pasar el manager propio en web hacía fallar TODAS las
   /// imágenes: de ahí los «toca para reintentar» generalizados.
   static ImageProvider provider(String url) => kIsWeb
-      ? CachedNetworkImageProvider(url)
+      ? NetworkImage(url) // en web manda el navegador (respeta max-age del CDN)
       : CachedNetworkImageProvider(url, cacheManager: cache);
 
   /// El manager de disco, o `null` en web (el widget usa su caché por defecto).

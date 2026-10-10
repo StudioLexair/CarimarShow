@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -89,6 +90,15 @@ class _PosterImageState extends State<PosterImage> {
 
     final Widget image = resolved == null
         ? fallback
+        : kIsWeb
+        ? _WebImage(
+            key: ValueKey<String>('$resolved#$_intento'),
+            url: resolved,
+            fit: widget.fit,
+            borderRadius: widget.borderRadius,
+            autoRestantes: 2 - _intento,
+            onRetry: () => _reintentar(resolved),
+          )
         : CachedNetworkImage(
             key: ValueKey<String>('$resolved#$_intento'),
             imageUrl: resolved,
@@ -439,6 +449,74 @@ class PosterGridSkeleton extends StatelessWidget {
               ShimmerBox(width: itemWidth, borderRadius: 14),
         );
       },
+    );
+  }
+}
+
+/// En web, imagen de red SIN plugin de caché.
+///
+/// `cached_network_image` apoya su proveedor web en `flutter_cache_manager`,
+/// que en el navegador no tiene sistema de ficheros: el resultado era que
+/// TODAS las imágenes acababan en el tile de «toca para reintentar». Aquí se
+/// usa `Image.network`, que delega en la caché HTTP del navegador; el CDN de
+/// TMDB sirve `cache-control: max-age=43200`, así que la segunda visita (y el
+/// ida-y-vuelta entre pestañas) no vuelve a descargar nada.
+class _WebImage extends StatefulWidget {
+  const _WebImage({
+    required this.url,
+    required this.fit,
+    required this.autoRestantes,
+    required this.onRetry,
+    this.borderRadius,
+    super.key,
+  });
+
+  final String url;
+  final BoxFit fit;
+  final int autoRestantes;
+  final VoidCallback onRetry;
+  final BorderRadius? borderRadius;
+
+  @override
+  State<_WebImage> createState() => _WebImageState();
+}
+
+class _WebImageState extends State<_WebImage> {
+  bool _error = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_error) {
+      return _RetryTile(
+        borderRadius: widget.borderRadius,
+        autoRestantes: widget.autoRestantes,
+        onRetry: widget.onRetry,
+      );
+    }
+    return Image.network(
+      widget.url,
+      fit: widget.fit,
+      gaplessPlayback: true,
+      errorBuilder: (BuildContext context, Object error, StackTrace? st) {
+        // Marcar el error fuera del build para no setState durante el build.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() => _error = true);
+        });
+        return _ShimmerPlaceholder(borderRadius: widget.borderRadius);
+      },
+      loadingBuilder:
+          (BuildContext context, Widget child, ImageChunkEvent? p) =>
+              _ShimmerPlaceholder(borderRadius: widget.borderRadius),
+      frameBuilder:
+          (BuildContext context, Widget child, int? frame, bool sync) {
+            if (frame == null) return child;
+            return AnimatedOpacity(
+              opacity: sync ? 1 : 0,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              child: child,
+            );
+          },
     );
   }
 }
