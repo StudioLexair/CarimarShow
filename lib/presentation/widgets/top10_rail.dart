@@ -82,7 +82,6 @@ class Top10Rail extends StatelessWidget {
                             height: 1,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -6,
-                            color: Colors.transparent,
                             foreground: Paint()
                               ..style = PaintingStyle.stroke
                               ..strokeWidth = 3
