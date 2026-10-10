@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
@@ -11,7 +9,6 @@ import '../../../core/utils/responsive.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/core_providers.dart';
-import '../../providers/settings_providers.dart';
 import '../../providers/watchlist_providers.dart';
 import '../../widgets/brand_app_bar.dart';
 
@@ -29,8 +26,6 @@ class ProfileScreen extends ConsumerWidget {
     final bool synced = ref.watch(watchlistIsSyncedProvider);
     final bool accountsEnabled = ref.watch(accountsEnabledProvider);
     final bool isDemoCatalog = ref.watch(demoModeProvider);
-    final ThemeMode themeMode = ref.watch(themeModeProvider);
-    final bool adultContent = ref.watch(adultContentProvider);
 
     return Scaffold(
       appBar: const BrandAppBar(showSearch: false),
@@ -538,11 +533,4 @@ class _AboutBox extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Formatea bytes como KB/MB para la sección de almacenamiento.
-String _fmtBytes(int bytes) {
-  if (bytes <= 0) return '0 KB';
-  if (bytes < 1024 * 1024) return '${(bytes / 1024).round()} KB';
-  return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
 }

@@ -4,11 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_strings.dart';
-import '../../../core/constants/business_info.dart';
 import '../../../core/network/network_probe.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../providers/auth_providers.dart';
 import '../../providers/core_providers.dart';
 import '../../providers/settings_providers.dart';
 
