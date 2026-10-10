@@ -511,7 +511,7 @@ class _ActionBar extends ConsumerWidget {
         FilledButton.icon(
           onPressed: () => context.push(
             '/player',
-            extra: PlayerArgs.sample(item.displayTitle),
+            extra: PlayerArgs.sample(details.displayTitle),
           ),
           icon: const Icon(Icons.play_arrow_rounded),
           label: const Text('Reproducir'),
