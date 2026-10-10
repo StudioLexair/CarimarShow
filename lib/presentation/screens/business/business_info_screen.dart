@@ -65,8 +65,11 @@ class BusinessInfoScreen extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            'Catálogo informativo: la app muestra información pública de '
-            'películas y series y no aloja ni reproduce contenido.',
+            'CarimarShow es un producto de Studio Lexair, creado y '
+            'desarrollado por Airien Yolexis Rojas Roque. El contenido '
+            'audiovisual se reproduce solo desde fuentes autorizadas por el '
+            'titular de los derechos. Consulta al desarrollador: '
+            'studio.lexair@gmail.com · +53 52678747.',
             style: TextStyle(
               color: context.pal.textDisabled,
               fontSize: 12.5,

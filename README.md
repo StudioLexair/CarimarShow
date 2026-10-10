@@ -12,7 +12,6 @@ Un mismo código para **iOS · Android · Web · Windows · macOS · Linux**.
 [![TMDB](https://img.shields.io/badge/datos-TMDB-01B4E4?logo=themoviedatabase&logoColor=white)](https://www.themoviedb.org)
 [![tests](https://img.shields.io/badge/tests-131%20en%20verde-2ED573)](#tests)
 [![plataformas](https://img.shields.io/badge/plataformas-6-FFC53D)](#plataformas)
-[![licencia](https://img.shields.io/badge/licencia-MIT-9E9E9E)](LICENSE)
 
 [![ci](https://github.com/StudioLexair/CarimarShow/actions/workflows/ci.yml/badge.svg)](https://github.com/StudioLexair/CarimarShow/actions/workflows/ci.yml)
 [![release](https://github.com/StudioLexair/CarimarShow/actions/workflows/release.yml/badge.svg)](https://github.com/StudioLexair/CarimarShow/releases)
@@ -265,6 +264,12 @@ películas o series, y ninguna persona del reparto es real.
 CarimarShow es una aplicación de demostración. **No reproduce ni aloja contenido**:
 solo muestra información pública de catálogos.
 
-## Licencia
+## Propiedad intelectual
 
-[MIT](LICENSE)
+© 2026 **Studio Lexair** — creado y desarrollado por
+**Airien Yolexis Rojas Roque** (studio.lexair@gmail.com · +53 52678747).
+
+**Todos los derechos reservados.** Este repositorio y sus binarios están
+protegidos: sin autorización escrita del titular no se permite copiar,
+modificar, distribuir ni hacer ingeniería inversa. El detalle completo está
+en [COPYRIGHT.md](COPYRIGHT.md) y [LICENSE](LICENSE).

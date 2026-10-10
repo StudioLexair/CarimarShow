@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/core_providers.dart';
 import 'auth_widgets.dart';
 
 /// Alta de cuenta nueva.
@@ -81,7 +82,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         );
 
     if (!mounted) return;
-    if (ok) return; // El router redirige solo.
+    if (ok) {
+      await ref.read(sessionModeProvider.notifier).exitGuest();
+      return; // El router redirige solo.
+    }
 
     final String? error = ref.read(authControllerProvider).error;
     if (error != null && error.toLowerCase().contains('correo')) {

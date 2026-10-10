@@ -1,33 +1,13 @@
-MIT License
+CARIMARSHOW — PROPIETARIO / PROPIETARY
+© 2026 Studio Lexair. Todos los derechos reservados.
 
-Copyright (c) 2026 CarimarShow
+Este software y su documentación son propiedad de Studio Lexair
+(creador y desarrollador: Airien Yolexis Rojas Roque).
+NO se concede permiso alguno para copiar, modificar, distribuir, vender,
+alquilar, realizar ingeniería inversa ni crear obras derivadas sin
+autorización escrita y previa del titular.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+El detalle completo, incluidas las excepciones de uso por usuarios finales,
+está en COPYRIGHT.md.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-Third-party notices
--------------------
-
-This product uses the TMDB API but is not endorsed or certified by TMDB.
-See https://www.themoviedb.org/documentation/api/terms-of-use
-
-The demo catalog bundled in assets/data/demo_catalog.json contains entirely
-fictional titles, people and data created for development purposes. Any
-resemblance to real films, series or persons is coincidental.
+Contacto: studio.lexair@gmail.com · +53 52678747

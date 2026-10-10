@@ -89,3 +89,6 @@ abstract final class Strings {
   static const String tmdbAttribution =
       'Este producto usa la API de TMDB pero no está avalado ni certificado por TMDB.';
 }
+
+/// Versión mostrada en «Acerca de». Se sube con cada release.
+const String kAppVersion = '1.0.4';

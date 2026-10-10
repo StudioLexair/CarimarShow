@@ -102,11 +102,15 @@ final Provider<MediaRepository> mediaRepositoryProvider =
 final Provider<AuthRepository> authRepositoryProvider =
     Provider<AuthRepository>((Ref ref) {
       final sb.SupabaseClient? client = ref.watch(supabaseClientProvider);
-      final AuthRepository repository = client == null
+      // Con sesión invitada se usa SIEMPRE el repositorio local, aunque haya
+      // backend configurado: el invitado no tiene usuario en Supabase y
+      // meterle un id inventado reventaría las políticas RLS.
+      final bool invitado = ref.watch(sessionModeProvider).isGuest;
+      final AuthRepository repository = (client == null || invitado)
           ? ref.watch(localAuthRepositoryProvider)
           : SupabaseAuthRepository(client: client);
       // La instancia local se gestiona en main(); solo se libera la remota.
-      if (client != null) ref.onDispose(repository.dispose);
+      if (client != null && !invitado) ref.onDispose(repository.dispose);
       return repository;
     });
 
@@ -114,10 +118,11 @@ final Provider<AuthRepository> authRepositoryProvider =
 final Provider<WatchlistRepository> watchlistRepositoryProvider =
     Provider<WatchlistRepository>((Ref ref) {
       final sb.SupabaseClient? client = ref.watch(supabaseClientProvider);
-      final WatchlistRepository repository = client == null
+      final bool invitado = ref.watch(sessionModeProvider).isGuest;
+      final WatchlistRepository repository = (client == null || invitado)
           ? ref.watch(localWatchlistRepositoryProvider)
           : SupabaseWatchlistRepository(client: client);
-      if (client != null) ref.onDispose(repository.dispose);
+      if (client != null && !invitado) ref.onDispose(repository.dispose);
       return repository;
     });
 
@@ -177,3 +182,40 @@ class AdultContentNotifier extends Notifier<bool> {
 
 final NotifierProvider<AdultContentNotifier, bool> adultContentProvider =
     NotifierProvider<AdultContentNotifier, bool>(AdultContentNotifier.new);
+
+/// Modo de sesión actual: cuenta real o invitado.
+///
+/// Hace posible ser invitado AUNQUE haya backend configurado. Antes el
+/// repositorio de autenticación se elegía solo por presencia de Supabase, así
+/// que con backend el modo invitado era imposible y la pantalla de acceso lo
+/// decía con un cartel de error. Ahora una bandera persistida conmuta los dos
+/// repositorios (auth y lista) a sus versiones locales.
+class SessionMode {
+  const SessionMode({this.isGuest = false});
+  final bool isGuest;
+}
+
+class SessionModeController extends Notifier<SessionMode> {
+  static const String _key = 'session.invitado';
+
+  @override
+  SessionMode build() => SessionMode(
+    isGuest: ref.watch(sharedPreferencesProvider).getBool(_key) ?? false,
+  );
+
+  Future<void> enterGuest() async {
+    state = const SessionMode(isGuest: true);
+    await ref.read(sharedPreferencesProvider).setBool(_key, true);
+  }
+
+  Future<void> exitGuest() async {
+    if (!state.isGuest) return;
+    state = const SessionMode(isGuest: false);
+    await ref.read(sharedPreferencesProvider).setBool(_key, false);
+  }
+}
+
+final NotifierProvider<SessionModeController, SessionMode> sessionModeProvider =
+    NotifierProvider<SessionModeController, SessionMode>(
+      SessionModeController.new,
+    );

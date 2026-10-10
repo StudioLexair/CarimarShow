@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_strings.dart';
 import '../../../core/theme/app_colors.dart';
@@ -115,6 +116,54 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
 
+          const _SectionLabel('Acerca de'),
+          _InfoTile(
+            icon: Icons.code_rounded,
+            title: 'Desarrollado por',
+            value: 'Studio Lexair',
+            subtitle:
+                'Airien Yolexis Rojas Roque, creador y desarrollador de CarimarShow.',
+          ),
+          Card(
+            color: AppColors.surface,
+            child: ListTile(
+              leading: const Icon(
+                Icons.alternate_email_rounded,
+                color: AppColors.accent,
+              ),
+              title: const Text('studio.lexair@gmail.com'),
+              subtitle: const Text('Consultas al desarrollador'),
+              onTap: () => launchUrl(
+                Uri.parse('mailto:studio.lexair@gmail.com'),
+                mode: LaunchMode.externalApplication,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            color: AppColors.surface,
+            child: ListTile(
+              leading: const Icon(
+                Icons.phone_outlined,
+                color: AppColors.accent,
+              ),
+              title: const Text('+53 52678747'),
+              subtitle: const Text('Soporte técnico del desarrollador'),
+              onTap: () => launchUrl(
+                Uri.parse('tel:+5352678747'),
+                mode: LaunchMode.externalApplication,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _InfoTile(
+            icon: Icons.verified_outlined,
+            title: 'Versión',
+            value: kAppVersion,
+            subtitle: '© 2026 Studio Lexair. Todos los derechos reservados.',
+          ),
+          const SizedBox(height: 12),
+
           const _SectionLabel('Tus datos'),
           _InfoTile(
             icon: Icons.cloud_outlined,
@@ -210,6 +259,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
     if (confirmed == true) {
+      await ref.read(sessionModeProvider.notifier).exitGuest();
       await ref.read(authControllerProvider.notifier).signOut();
       // El router detecta la sesión cerrada y redirige solo a /login.
     }

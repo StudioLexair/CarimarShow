@@ -401,7 +401,6 @@ footer a:hover{color:var(--text)}
       <a href="#descargas">Descargas</a>
       <a href="#caracteristicas">Características</a>
       <a href="#instalar">Instalación</a>
-      <a href="#codigo">Código</a>
       <a class="btn btn-ghost btn-sm" href="app/" rel="noopener">Abrir la app web</a>
     </nav>
   </div>
@@ -441,7 +440,7 @@ footer a:hover{color:var(--text)}
   </div>
 
   <p class="hero-note" id="hero-note">
-    Sin registro obligatorio · Sin anuncios · Licencia MIT ·
+    Sin registro obligatorio · Sin anuncios ·
     <span id="version-label">versión por determinar</span>
   </p>
 
@@ -473,9 +472,8 @@ footer a:hover{color:var(--text)}
       <noscript>
         <p style="color:var(--text-dim)">
           Esta página necesita JavaScript para listar las descargas.
-          Puedes verlas todas en
-          <a href="https://github.com/StudioLexair/CarimarShow/releases" style="color:var(--brand-soft)">
-            la página de Releases de GitHub</a>.
+          Si lo ves así, escribe al desarrollador para recibir el instalador:
+          <a href="mailto:studio.lexair@gmail.com" style="color:var(--brand-soft)">studio.lexair@gmail.com</a>.
         </p>
       </noscript>
     </div>
@@ -486,10 +484,7 @@ footer a:hover{color:var(--text)}
       <span>Versión <b id="meta-version">—</b></span>
       <span>Publicada <b id="meta-date">—</b></span>
       <span>Binarios <b id="meta-count">—</b></span>
-      <a id="meta-all" href="https://github.com/StudioLexair/CarimarShow/releases" rel="noopener">
-        Ver todos los releases →
-      </a>
-      <a id="meta-sums" href="#" rel="noopener" hidden>SHA-256</a>
+
     </div>
   </div>
 </section>
@@ -606,8 +601,7 @@ footer a:hover{color:var(--text)}
         <div class="warn-inline">
           Ese aviso sale porque el binario no está firmado con un certificado
           de código de Windows, que cuesta dinero. No significa que el archivo
-          sea peligroso: puedes verificarlo tú mismo con el
-          <code>SHA256SUMS.txt</code> del release.
+          sea peligroso: puedes pedirle al desarrollador el checksum del binario.
         </div>
         <p style="margin-bottom:0">
           Mantén toda la carpeta junta: el <code>.exe</code> necesita las DLL
@@ -697,48 +691,42 @@ footer a:hover{color:var(--text)}
 </section>
 
 <!-- ══════════════ CÓDIGO ══════════════ -->
-<section id="codigo">
+<section id="studio">
   <div class="wrap">
     <div class="two-col">
       <div>
-        <div class="eyebrow">Código abierto</div>
+        <div class="eyebrow">Quién está detrás</div>
         <h2 style="font-size:clamp(24px,3.6vw,32px);letter-spacing:-.025em;font-weight:750;margin:0 0 14px;line-height:1.18">
-          Todo el proyecto está en GitHub
+          Un producto de Studio Lexair
         </h2>
-        <p style="color:var(--text-dim);margin:0 0 20px;font-size:15.5px">
-          CarimarShow es un proyecto Flutter con licencia MIT: puedes leerlo,
-          modificarlo, compilarlo tú mismo y redistribuirlo. Los binarios que
-          descargas aquí los compila GitHub Actions desde este mismo código, en
-          cada release — no hay builds opacas.
+        <p style="color:var(--text-dim);margin:0 0 16px;font-size:15.5px">
+          CarimarShow está desarrollado y mantenido por
+          <strong style="color:var(--text)">Studio Lexair</strong>, detrás de la
+          cual está <strong style="color:var(--text)">Airien Yolexis Rojas Roque</strong>,
+          creador y desarrollador de la aplicación.
+        </p>
+        <p style="color:var(--text-dim);margin:0 0 20px;font-size:14.5px">
+          ¿Algo que consultar sobre la app? Contacto directo con el desarrollador:
         </p>
         <div class="hero-cta" style="justify-content:flex-start">
-          <a class="btn btn-ghost btn-sm" href="https://github.com/StudioLexair/CarimarShow" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.99 1.03-2.69-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.03a9.5 9.5 0 0 1 5 0c1.91-1.3 2.75-1.03 2.75-1.03.55 1.38.2 2.4.1 2.65.64.7 1.03 1.6 1.03 2.69 0 3.85-2.34 4.7-4.57 4.95.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
-            Ver el código
-          </a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/StudioLexair/CarimarShow/issues" rel="noopener">Reportar un fallo</a>
-          <a class="btn btn-ghost btn-sm" href="https://github.com/StudioLexair/CarimarShow/blob/main/docs/SETUP.md" rel="noopener">Compilarla tú mismo</a>
+          <a class="btn btn-ghost btn-sm" href="mailto:studio.lexair@gmail.com">studio.lexair@gmail.com</a>
+          <a class="btn btn-ghost btn-sm" href="tel:+5352678747">+53 52678747</a>
         </div>
       </div>
-
       <div>
-        <div class="eyebrow">Stack</div>
-        <h3 style="margin:0 0 6px;font-size:19px;font-weight:680">Con qué está hecho</h3>
-        <p style="color:var(--text-dim);font-size:14.5px;margin:0">
-          Arquitectura limpia en cuatro capas: la interfaz depende de contratos,
-          nunca de implementaciones. Por eso la misma app funciona con datos
-          reales o con el catálogo de demo sin cambiar una línea de UI.
+        <div class="eyebrow">El negocio</div>
+        <h3 style="margin:0 0 6px;font-size:19px;font-weight:680">CarimarShow, Centro Habana</h3>
+        <p style="color:var(--text-dim);font-size:14.5px;margin:0 0 14px">
+          Lealtad 559, entre Salud y Dragones.<br>
+          Lunes a viernes, 1 PM – 10 PM.<br>
+          53324928 · 78660658 · carimarshowapk@qmail.com
         </p>
         <div class="stack">
-          <span class="chip"><b>Flutter</b> 3.44+</span>
-          <span class="chip"><b>Dart</b> 3.12+</span>
-          <span class="chip"><b>Riverpod</b> 3</span>
-          <span class="chip"><b>go_router</b> 18</span>
-          <span class="chip"><b>Dio</b> 5</span>
-          <span class="chip"><b>Supabase</b> · Auth + Postgres</span>
-          <span class="chip"><b>TMDB</b> API</span>
-          <span class="chip"><b>131</b> tests</span>
-          <span class="chip"><b>GitHub Actions</b> · CI/CD</span>
+          <span class="chip"><b>Android</b> · APK firmado</span>
+          <span class="chip"><b>Windows</b> 10/11</span>
+          <span class="chip"><b>macOS</b> Intel y Apple Silicon</span>
+          <span class="chip"><b>Linux</b> .deb y tar.gz</span>
+          <span class="chip"><b>Web</b> sin instalar nada</span>
         </div>
       </div>
     </div>
@@ -757,8 +745,8 @@ footer a:hover{color:var(--text)}
           <span>CarimarShow</span>
         </a>
         <p style="margin:0;max-width:330px">
-          Catálogo de películas y series para todos tus dispositivos.
-          Gratuito, sin anuncios y de código abierto.
+          Catálogo y videoteca de películas y series para todos tus
+          dispositivos. Un producto de Studio Lexair.
         </p>
       </div>
 
@@ -774,15 +762,15 @@ footer a:hover{color:var(--text)}
       </div>
 
       <div>
-        <h4>Proyecto</h4>
+        <h4>Desarrollador</h4>
         <ul>
-          <li><a href="https://github.com/StudioLexair/CarimarShow" rel="noopener">Repositorio</a></li>
-          <li><a href="https://github.com/StudioLexair/CarimarShow/releases" rel="noopener">Releases</a></li>
-          <li><a href="https://github.com/StudioLexair/CarimarShow/blob/main/docs/ARCHITECTURE.md" rel="noopener">Arquitectura</a></li>
-          <li><a href="https://github.com/StudioLexair/CarimarShow/blob/main/docs/SETUP.md" rel="noopener">Guía de configuración</a></li>
-          <li><a href="https://github.com/StudioLexair/CarimarShow/blob/main/LICENSE" rel="noopener">Licencia MIT</a></li>
+          <li><a href="#studio">Studio Lexair</a></li>
+          <li><a href="mailto:studio.lexair@gmail.com">studio.lexair@gmail.com</a></li>
+          <li><a href="tel:+5352678747">+53 52678747</a></li>
+          <li><a href="#negocio-web">CarimarShow · Centro Habana</a></li>
         </ul>
       </div>
+    </div>
     </div>
 
     <div class="legal">
@@ -1130,8 +1118,8 @@ footer a:hover{color:var(--text)}
 
     if (!state.release) {
       pill.classList.add('is-warn');
-      txt.textContent = 'Sin releases publicadas todavía';
-      vl.textContent = 'compila desde el código fuente';
+      txt.textContent = 'Aún no hay versiones publicadas';
+      vl.textContent = 'pide soporte al desarrollador';
       showNotice(
         '<b>Todavía no hay ninguna versión publicada.</b> Los binarios aparecen ' +
         'aquí en cuanto se cree un tag <code>v*</code> en el repositorio y ' +
@@ -1153,20 +1141,24 @@ footer a:hover{color:var(--text)}
     $('meta-version').textContent = r.version || r.tag;
     $('meta-date').textContent = formatDate(r.published_at);
     $('meta-count').textContent = state.assets.length;
-    $('meta-all').href = r.html_url || RELEASES_URL;
+    var metaAll = $('meta-all');
+    if (metaAll) metaAll.href = r.html_url || RELEASES_URL;
 
-    var sums = findSums();
-    if (sums) {
-      var s = $('meta-sums');
-      s.href = sums.url; s.hidden = false; s.rel = 'noopener';
-      s.textContent = 'SHA-256 ↓';
+    var sumsEl = $('meta-sums');
+    if (sumsEl) {
+      var sums = findSums();
+      if (sums) {
+        sumsEl.href = sums.url; sumsEl.hidden = false; sumsEl.rel = 'noopener';
+        sumsEl.textContent = 'SHA-256 ↓';
+      }
     }
     bar.hidden = false;
 
     if (r.prerelease) {
       showNotice('<b>Esta es una versión preliminar.</b> Puede contener fallos. ' +
-                 'Si buscas la estable, mira <a href="' + RELEASES_URL +
-                 '" style="color:#ffcf70">todos los releases</a>.');
+                 'Cualquier incidencia, avisa al desarrollador: ' +
+                 '<a href="mailto:studio.lexair@gmail.com" style="color:#ffcf70">' +
+                 'studio.lexair@gmail.com</a>.');
     }
   }
 

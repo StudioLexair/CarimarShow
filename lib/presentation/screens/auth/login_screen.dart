@@ -8,6 +8,7 @@ import '../../../core/utils/responsive.dart';
 import '../../../core/utils/validators.dart';
 import '../../../domain/entities/app_user.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/core_providers.dart';
 import 'auth_widgets.dart';
 
 /// Acceso con correo y contraseña.
@@ -46,11 +47,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     // Con sesión iniciada el router redirige solo: no se navega desde aquí para
     // no provocar una doble transición.
+    if (ok) {
+      await ref.read(sessionModeProvider.notifier).exitGuest();
+    }
     if (ok && mounted) _password.clear();
   }
 
   Future<void> _guest() async {
     FocusScope.of(context).unfocus();
+    // Primero la bandera: así continueAsGuest ya resuelve el repositorio local
+    // aunque haya Supabase configurado.
+    await ref.read(sessionModeProvider.notifier).enterGuest();
     await ref.read(authControllerProvider.notifier).continueAsGuest();
   }
 
