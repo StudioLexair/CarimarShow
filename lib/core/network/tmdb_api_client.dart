@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../cache/catalog_cache.dart';
+import 'network_probe.dart';
 import '../config/app_config.dart';
 import '../constants/app_strings.dart';
 import '../constants/tmdb_constants.dart';
@@ -62,6 +63,21 @@ class TmdbApiClient {
     CancelToken? cancelToken,
   }) async {
     final String? cacheKey = cache == null ? null : _cacheKey(path, query);
+
+    // Sin conexión no se pierde el tiempo en intentar la red: se sirve la
+    // caché directamente. Es la regla que pidió el cliente: «verifica el
+    // internet y después la caché».
+    if (cacheKey != null && await NetworkProbe.tier() == NetTier.offline) {
+      final String? stored = await cache!.read(cacheKey);
+      if (stored != null) {
+        try {
+          return jsonDecode(stored);
+        } catch (_) {
+          // Caché corrupta: se intenta la red por si acaso.
+        }
+      }
+    }
+
     try {
       final Response<dynamic> response = await _dio.get<dynamic>(
         path,

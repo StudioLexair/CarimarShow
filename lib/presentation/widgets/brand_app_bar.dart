@@ -59,7 +59,7 @@ class BrandAppBar extends ConsumerWidget implements PreferredSizeWidget {
         IconButton(
           tooltip: 'Configuración',
           icon: const Icon(Icons.settings_outlined),
-          onPressed: () => context.go('/profile'),
+          onPressed: () => context.go('/ajustes'),
         ),
         if (showSearch)
           IconButton(

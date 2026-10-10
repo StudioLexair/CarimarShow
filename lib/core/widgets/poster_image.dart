@@ -2,6 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+import 'dart:async';
+
+import '../network/network_probe.dart';
 import '../theme/app_theme.dart';
 import '../utils/image_cache.dart';
 import '../constants/tmdb_constants.dart';
@@ -59,9 +62,25 @@ class _PosterImageState extends State<PosterImage> {
     if (mounted) setState(() => _intento++);
   }
 
+  /// En conexión lenta se pide un tamaño menor al CDN: la misma imagen pesa
+  /// ~4 veces menos y llega antes que el usuario pierda la paciencia.
+  static String _adaptar(String size) {
+    if (NetworkProbe.cachedTier != NetTier.slow) return size;
+    return switch (size) {
+      TmdbImageSize.posterLarge => TmdbImageSize.posterMedium,
+      TmdbImageSize.posterMedium => TmdbImageSize.posterSmall,
+      TmdbImageSize.backdropLarge => TmdbImageSize.backdropMedium,
+      TmdbImageSize.backdropMedium => TmdbImageSize.backdropSmall,
+      _ => size,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final String? resolved = TmdbImages.url(widget.imagePath, widget.size);
+    final String? resolved = TmdbImages.url(
+      widget.imagePath,
+      _adaptar(widget.size),
+    );
     final Widget fallback = _GradientPlaceholder(
       title: widget.title,
       seed: widget.seed,
@@ -82,6 +101,7 @@ class _PosterImageState extends State<PosterImage> {
             errorWidget: (BuildContext context, String url, Object error) =>
                 _RetryTile(
                   borderRadius: widget.borderRadius,
+                  autoRestantes: 2 - _intento,
                   onRetry: () => _reintentar(url),
                 ),
           );
@@ -282,14 +302,49 @@ class _ShimmerPlaceholder extends StatelessWidget {
 /// lenta o un CDN caído se veían como cajas vacías sin explicación. Ahora el
 /// hueco dice qué pasa y ofrece el reintento de un toque: se evacúa la URL de
 /// la caché y se vuelve a pedir.
-class _RetryTile extends StatelessWidget {
-  const _RetryTile({this.borderRadius, this.onRetry});
+class _RetryTile extends StatefulWidget {
+  const _RetryTile({this.borderRadius, this.onRetry, this.autoRestantes = 0});
 
   final BorderRadius? borderRadius;
   final VoidCallback? onRetry;
 
+  /// Reintentos que se lanzan solos (con espera creciente) antes de pedirle
+  /// un toque al usuario. En redes malas un fallo puntual se recupera solo y
+  /// el usuario ni se entera.
+  final int autoRestantes;
+
+  @override
+  State<_RetryTile> createState() => _RetryTileState();
+}
+
+class _RetryTileState extends State<_RetryTile> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoRestantes > 0) {
+      final int espera = 400 * (3 - widget.autoRestantes);
+      Timer(Duration(milliseconds: espera), () {
+        if (mounted) widget.onRetry?.call();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.autoRestantes > 0) {
+      return ColoredBox(
+        color: context.pal.surfaceHigh,
+        child: const Center(
+          child: SizedBox(
+            width: 18,
+            height: 18,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+    final BorderRadius? borderRadius = widget.borderRadius;
+    final VoidCallback? onRetry = widget.onRetry;
     return InkWell(
       borderRadius: borderRadius,
       onTap: onRetry,
